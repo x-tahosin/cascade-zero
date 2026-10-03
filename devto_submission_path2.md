@@ -4,7 +4,7 @@ published: false
 description: Turning Sanity Content Lake into an autonomous causal incident simulator and DEFCON 1 war room where upstream milestone slips trigger real-time cascading failures across a directed topological DAG.
 tags: sanitychallenge, sanity, ai, webdev
 cover_image: https://raw.githubusercontent.com/x-tahosin/cascade-zero/main/public/cover.jpg
-canonical_url: https://cascade-zero.vercel.app
+canonical_url: https://x-tahosin.github.io/cascade-zero/
 ---
 
 *This is a submission for the [Sanity Challenge, Path Two: Vibe-Code Something Strange](https://dev.to/challenges/sanity-2026-09-16)*
@@ -13,13 +13,13 @@ canonical_url: https://cascade-zero.vercel.app
 
 ## ⚡ The Strange Premise: Why Do Deadline Trackers Always Lie?
 
-Every engineering organization has lived through this exact scenario:
+Every engineering team has lived through this exact scenario:
 
 It is Thursday afternoon. A core database migration slips by a seemingly harmless 45 minutes. Nobody panics because the ticket status is still technically "in progress." But three hours later, the downstream auth token cutover misses its compliance window, the payment gateway verification job times out, the edge CDN invalidation queues back up, and by 8:00 PM the release is burning to the ground.
 
 Why? **Because traditional project trackers treat milestones as disconnected, passive rows in a database.** They display optimistic green checkboxes right up until the second everything collapses.
 
-When Sanity announced the **"Vibe-Code Something Strange"** challenge, I didn't want to build another marketing landing page, an e-commerce catalog, or a personal portfolio. I wanted to ask a strange question:
+When Sanity announced the **"Vibe-Code Something Strange"** challenge, I didn't want to build another marketing landing page, an e-commerce catalog, or a personal portfolio. I wanted to explore a strange question:
 
 > **What happens if you treat Sanity Content Lake not as a passive blog CMS, but as an active, graph-native causal incident simulator and DEFCON 1 war room?**
 
@@ -33,12 +33,12 @@ That is how **CASCADE-ZERO** was born.
 
 CASCADE-ZERO is a real-time, browser-native causal disaster simulator and release governance console. It simulates high-stakes distributed systems deployments (Fintech rails, OAuth cutovers, database shard migrations, and edge CDNs) where delays cascade topologically through interconnected nodes.
 
-![CASCADE-ZERO Architecture & Causal Flow](https://raw.githubusercontent.com/x-tahosin/cascade-zero/main/public/causal_dag_diagram.png)
+![CASCADE-ZERO Causal Horizon Simulator](https://raw.githubusercontent.com/x-tahosin/cascade-zero/main/public/screenshots/screen_simulator.png)
 
 ### Key Capabilities
 
 1. **Topological Causal DAG (Directed Acyclic Graph):** Milestones are structured documents in Sanity with strict SLA buffers and directional causal vectors. When an upstream milestone slips, downstream dependencies recalculate their delays, blast radius, and system risk in real time.
-2. **Playable 24-Hour Timeline Scrubber & Chaos Matrix:** Drag the time slider or inject real-world faults (*Postgres Shard Lock Contention*, *HSM Key Desync*, *Settlement Gateway Timeout*). Watch the graph pulse crimson and DEFCON escalate from 5 (Nominal) to 1 (Doomsday).
+2. **Playable Timeline Scrubber & Chaos Matrix:** Drag the time slider or inject real-world faults (*Postgres Shard Lock Contention*, *Stripe Timeout*, *HSM Divergence*, *SOC2 Drift*). Watch the graph pulse crimson and DEFCON escalate from 5 (Nominal) to 1 (Doomsday).
 3. **Autonomous Sanity Workflows Governance:** As systemic risk escalates, CASCADE-ZERO locks downstream release cutovers, generates a formal remediation proposal, and submits an incident mutation into Sanity Workflows. Releases cannot proceed without a 3-officer cryptographic multi-sig approval.
 4. **Zero-Asset Web Audio Synthesizer:** No external mp3 files or sound packs. All mission control alarms, DEFCON sirens, cascade warning pings, and resolution chimes are generated procedurally on the fly using native Web Audio API oscillators.
 5. **Interactive Sanity Lake Inspector:** A built-in terminal allowing judges to inspect live GROQ queries, document schemas, and immutable transaction logs.
@@ -47,10 +47,10 @@ CASCADE-ZERO is a real-time, browser-native causal disaster simulator and releas
 
 ## 🚀 Live Demo & Repository
 
-- 🌐 **Interactive War Room:** [https://cascade-zero.vercel.app](https://cascade-zero.vercel.app)
-- 🎛️ **Causal Simulator:** [https://cascade-zero.vercel.app/simulator](https://cascade-zero.vercel.app/simulator)
-- ⚖️ **Governance State Machine:** [https://cascade-zero.vercel.app/governance](https://cascade-zero.vercel.app/governance)
-- 🌊 **Sanity Lake Inspector:** [https://cascade-zero.vercel.app/lake](https://cascade-zero.vercel.app/lake)
+- 🌐 **Interactive War Room:** [https://x-tahosin.github.io/cascade-zero/](https://x-tahosin.github.io/cascade-zero/)
+- 🎛️ **Causal Simulator:** [https://x-tahosin.github.io/cascade-zero/simulator](https://x-tahosin.github.io/cascade-zero/simulator)
+- ⚖️ **Governance State Machine:** [https://x-tahosin.github.io/cascade-zero/governance](https://x-tahosin.github.io/cascade-zero/governance)
+- 🌊 **Sanity Lake Inspector:** [https://x-tahosin.github.io/cascade-zero/lake](https://x-tahosin.github.io/cascade-zero/lake)
 - 💻 **GitHub Repository:** [https://github.com/x-tahosin/cascade-zero](https://github.com/x-tahosin/cascade-zero)
 - 📋 **Sanity Dataset:** Public Simulation Lake (`cascade-zero-live` / `production`)
 
@@ -188,9 +188,9 @@ I wanted authentic mission control audio, but I didn't want external sound files
 
 ## 🧪 Visual Proof & Verification Gallery
 
-Every view in CASCADE-ZERO was crafted to feel like a high-density, mission-critical operations center:
+Every view in CASCADE-ZERO was captured directly from our live production release:
 
-### 1. The Interactive War Room & Causal Graph
+### 1. The Interactive War Room Overview
 The central command desk displaying live telemetry, active incident vectors, and real-time SLA degradation meters.
 
 ![Interactive War Room](https://raw.githubusercontent.com/x-tahosin/cascade-zero/main/public/screenshots/screen_overview.png)
@@ -201,7 +201,7 @@ Drag the 24-hour timeline scrubber to watch deadlines collide and cascade across
 ![Causal Simulator](https://raw.githubusercontent.com/x-tahosin/cascade-zero/main/public/screenshots/screen_simulator.png)
 
 ### 3. Chaos Monkey Fault Injections
-One-click real-world incident simulations: Postgres shard contention, HSM key desynchronization, and gateway timeouts.
+One-click real-world incident simulations: Postgres shard contention, HSM key desynchronization, and gateway timeouts. Notice the waveform and nodes light up crimson.
 
 ![Chaos Monkey Active](https://raw.githubusercontent.com/x-tahosin/cascade-zero/main/public/screenshots/screen_chaos_active.png)
 
@@ -211,7 +211,7 @@ Inspect live Sanity schema definitions, execute custom GROQ queries directly aga
 ![Sanity Lake Inspector](https://raw.githubusercontent.com/x-tahosin/cascade-zero/main/public/screenshots/screen_lake.png)
 
 ### 5. Multi-Sig Governance & Safe Cutover Deployment
-The release cannot ship under elevated DEFCON without 3-of-3 multi-sig officer approvals and incident post-mortem generation.
+The release cannot ship under elevated DEFCON without 3-of-3 multi-sig officer approvals and automated post-mortem generation.
 
 ![Incident Governance Workflow](https://raw.githubusercontent.com/x-tahosin/cascade-zero/main/public/screenshots/screen_governance.png)
 
@@ -221,21 +221,20 @@ The release cannot ship under elevated DEFCON without 3-of-3 multi-sig officer a
 
 To experience the full causal simulation in under two minutes:
 
-1. **Launch the War Room:** Navigate to [https://cascade-zero.vercel.app](https://cascade-zero.vercel.app).
-2. **Take the 30-Second Guided Tour:** Click **"30s Tour"** in the top navigation bar for a quick overview of the controls.
-3. **Simulate an Upstream Disaster:**
-   - Go to the [Simulator](https://cascade-zero.vercel.app/simulator).
-   - In the Chaos Monkey matrix, click **"POSTGRES LOCK (+45m)"**.
+1. **Launch the War Room:** Navigate to [https://x-tahosin.github.io/cascade-zero/](https://x-tahosin.github.io/cascade-zero/).
+2. **Explore the Causal Simulator:**
+   - Go to [Simulator](https://x-tahosin.github.io/cascade-zero/simulator).
+   - In the Chaos Control Panel, click **"POSTGRES LOCK"**.
    - Notice the sound effect fire, the causal vectors turn amber and red, and downstream payments slip by over 100 minutes due to non-linear blast radius amplification.
-4. **Trigger AI Remediation:**
+3. **Trigger AI Remediation:**
    - Click the **"AI MITIGATION"** button to compute the optimal SLA buffer injection.
-   - Click **"Apply Remediation"** to witness the cluster self-heal back to green.
-5. **Inspect the Content Lake:**
-   - Go to [Sanity Lake](https://cascade-zero.vercel.app/lake).
-   - Click **"Execute GROQ Query"** to view live document payloads and review the mutation audit log.
-6. **Sign Off Governance:**
-   - Visit [Governance](https://cascade-zero.vercel.app/governance).
-   - Complete the multi-sig sign-offs and launch the **5-Stage Live Cutover**.
+   - Click **"SUGGEST REMEDIATION"** to witness the cluster self-heal back to green.
+4. **Inspect the Content Lake:**
+   - Go to [Sanity Lake / Experiments](https://x-tahosin.github.io/cascade-zero/lake).
+   - Click **"Run Query"** to view live document payloads and review the mutation audit log.
+5. **Sign Off Governance:**
+   - Visit [Governance / Analytics](https://x-tahosin.github.io/cascade-zero/governance).
+   - Complete the multi-sig sign-offs and copy the generated post-mortem.
 
 ---
 

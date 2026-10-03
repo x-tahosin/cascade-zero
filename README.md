@@ -5,19 +5,17 @@
 [![Next.js 16](https://img.shields.io/badge/Next.js-16.3-black?style=for-the-badge&logo=next.js)](https://nextjs.org/)
 [![React 19](https://img.shields.io/badge/React-19-blue?style=for-the-badge&logo=react)](https://react.dev/)
 [![Sanity Content Lake](https://img.shields.io/badge/Sanity-Content%20Lake-red?style=for-the-badge&logo=sanity)](https://www.sanity.io/)
-[![Tailwind CSS](https://img.shields.io/badge/Tailwind-CSS%204-38bdf8?style=for-the-badge&logo=tailwindcss)](https://tailwindcss.com/)
+[![GitHub Pages](https://img.shields.io/badge/Deployment-GitHub%20Pages-2ea44f?style=for-the-badge&logo=github)](https://x-tahosin.github.io/cascade-zero/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-emerald?style=for-the-badge)](LICENSE)
 
 ---
 
 ## 🌐 Live Deployment & Demo Links
 
-- 🚀 **Interactive War Room:** [https://cascade-zero.vercel.app](https://cascade-zero.vercel.app)
-- 🎛️ **Causal Simulator:** [https://cascade-zero.vercel.app/simulator](https://cascade-zero.vercel.app/simulator)
-- ⚖️ **Governance State Machine:** [https://cascade-zero.vercel.app/governance](https://cascade-zero.vercel.app/governance)
-- 🌊 **Sanity Lake Inspector:** [https://cascade-zero.vercel.app/lake](https://cascade-zero.vercel.app/lake)
-- 🧪 **Chaos Monkey Experiments:** [https://cascade-zero.vercel.app/experiments](https://cascade-zero.vercel.app/experiments)
-- 📊 **Telemetry Analytics:** [https://cascade-zero.vercel.app/analytics](https://cascade-zero.vercel.app/analytics)
+- 🚀 **Interactive War Room:** [https://x-tahosin.github.io/cascade-zero/](https://x-tahosin.github.io/cascade-zero/)
+- 🎛️ **Causal Simulator:** [https://x-tahosin.github.io/cascade-zero/simulator](https://x-tahosin.github.io/cascade-zero/simulator)
+- ⚖️ **Governance State Machine:** [https://x-tahosin.github.io/cascade-zero/governance](https://x-tahosin.github.io/cascade-zero/governance)
+- 🌊 **Sanity Lake Inspector:** [https://x-tahosin.github.io/cascade-zero/lake](https://x-tahosin.github.io/cascade-zero/lake)
 
 ---
 
@@ -34,9 +32,9 @@ By leveraging **Sanity Content Lake** as a graph database and state engine rathe
 
 ---
 
-## 📸 Interface & Verification Gallery
+## 📸 Interface & Live Production Screenshots
 
-| Interactive War Room & Causal DAG | Real-time Causal Horizon Simulator |
+| Interactive War Room & Causal Graph | Real-time Causal Horizon Simulator |
 | :---: | :---: |
 | ![Overview](public/screenshots/screen_overview.png) | ![Simulator](public/screenshots/screen_simulator.png) |
 
@@ -44,9 +42,9 @@ By leveraging **Sanity Content Lake** as a graph database and state engine rathe
 | :---: | :---: |
 | ![Chaos Mode](public/screenshots/screen_chaos_active.png) | ![Sanity Lake](public/screenshots/screen_lake.png) |
 
-| Incident Governance Workflow & Approvals | Milestone Node Inspection & Causal Couplings |
-| :---: | :---: |
-| ![Governance](public/screenshots/screen_governance.png) | ![Node Detail](public/screenshots/screen_node_detail_modal.png) |
+| Incident Governance Workflow & Approvals |
+| :---: |
+| ![Governance](public/screenshots/screen_governance.png) |
 
 ---
 
@@ -141,17 +139,10 @@ export const incidentWorkflowSchema = {
    - *Global Edge DNS Propagation Hang* (+120m lag)
 4. **Autonomous Sanity Workflows:** Dynamic governance that elevates DEFCON from 5 (Normal) to 1 (Doomsday), freezes downstream cutovers, and dispatches incident mutations directly to Sanity Content Lake.
 5. **Zero-Dependency Web Audio Synth:** Real-time procedural mission control audio synthesis (DEFCON klaxons, heartbeats, cascade alerts, resolution chimes) powered natively by the Web Audio API.
-6. **30-Second Guided Tour:** One-click automated onboarding walk-through highlighting the causal graph, time scrubber, chaos controls, and lake inspector.
 
 ---
 
 ## 🛠️ Local Development & Quickstart
-
-### Prerequisites
-- Node.js 18+ or 20+
-- npm, yarn, or pnpm
-
-### Installation
 
 ```bash
 # Clone the repository
@@ -168,15 +159,6 @@ npm run dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) in your browser.
-
-### Environment Configuration (Optional for Live Remote Sanity Lake)
-Create a `.env.local` file in the root:
-```env
-NEXT_PUBLIC_SANITY_PROJECT_ID=your_sanity_project_id
-NEXT_PUBLIC_SANITY_DATASET=production
-NEXT_PUBLIC_SANITY_API_VERSION=2026-09-01
-```
-*(If omitted, CASCADE-ZERO runs seamlessly with its built-in resilient in-memory Content Lake simulation and official `@sanity/client` integration).*
 
 ---
 
