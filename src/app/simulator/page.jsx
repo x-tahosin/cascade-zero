@@ -22,6 +22,7 @@ import {
   FileText
 } from 'lucide-react';
 import { sounds } from '../../engine/soundFx';
+import { ECG_NORMAL_PATH, ECG_HAZARD_PATH } from '../../engine/ecgPaths';
 
 // Exact Medical / Telemetry Heartbeat (ECG) Icon matching reference image
 function HeartbeatIcon({ className = "w-4 h-4 text-emerald-400" }) {
@@ -54,16 +55,17 @@ function HsmDivergenceIcon({ className = "w-4 h-4 text-emerald-400" }) {
   );
 }
 
-// Authentic ECG Heartbeat Monitor Waveform matching slip_waveform.png
+// Authentic Continuous Left-to-Right ECG Heartbeat Monitor Waveform matching reference image
 function EcgHeartbeatWaveform({ isHazard = false }) {
   const strokeColor = isHazard ? '#f43f5e' : '#10b981';
   const glowId = isHazard ? 'ecgHazardGlow' : 'ecgNormalGlow';
+  const animClass = isHazard ? 'animate-ecg-flow-fast' : 'animate-ecg-flow';
 
   return (
     <div className="h-11 w-full flex items-center overflow-hidden bg-[#03060c] rounded-md border border-slate-800/80 px-1 relative select-none">
       {/* Background Medical Telemetry Grid */}
       <div className="absolute inset-0 flex justify-between pointer-events-none px-2 opacity-15">
-        {[...Array(12)].map((_, i) => (
+        {[...Array(14)].map((_, i) => (
           <div key={i} className="w-[1px] h-full bg-emerald-400" />
         ))}
       </div>
@@ -73,29 +75,41 @@ function EcgHeartbeatWaveform({ isHazard = false }) {
         <div className="w-full h-[1px] bg-emerald-400" />
       </div>
 
-      {/* Live ECG Waveform Path (P-Q-R-S-T cardiac cycles with realistic spikes) */}
-      <svg className="w-full h-full" viewBox="0 0 320 40" fill="none" preserveAspectRatio="none">
-        <defs>
-          <filter id={glowId} x="-20%" y="-20%" width="140%" height="140%">
-            <feGaussianBlur stdDeviation="1.0" result="blur" />
-            <feComposite in="SourceGraphic" in2="blur" operator="over" />
-          </filter>
-        </defs>
+      {/* Smooth edge fade mask so waves don't abruptly clip at container borders */}
+      <div
+        className="w-full h-full overflow-hidden relative flex items-center"
+        style={{
+          maskImage: 'linear-gradient(to right, transparent, black 16px, black calc(100% - 16px), transparent)',
+          WebkitMaskImage: 'linear-gradient(to right, transparent, black 16px, black calc(100% - 16px), transparent)'
+        }}
+      >
+        {/* Continuous Flowing SVG Waveform (Moves smoothly Left to Right) */}
+        <div className={`h-full flex items-center ${animClass}`} style={{ width: '1120px' }}>
+          <svg
+            className="h-10 shrink-0"
+            style={{ width: '1120px' }}
+            viewBox="0 0 1120 40"
+            fill="none"
+            preserveAspectRatio="none"
+          >
+            <defs>
+              <filter id={glowId} x="-20%" y="-20%" width="140%" height="140%">
+                <feGaussianBlur stdDeviation="1.0" result="blur" />
+                <feComposite in="SourceGraphic" in2="blur" operator="over" />
+              </filter>
+            </defs>
 
-        <path
-          d={
-            isHazard
-              ? "M 0 20 L 8 19 L 14 26 L 19 6 L 24 35 L 29 17 L 38 23 L 45 8 L 52 36 L 59 15 L 68 27 L 75 5 L 82 35 L 89 18 L 98 25 L 105 6 L 112 36 L 120 16 L 130 26 L 137 4 L 144 35 L 152 18 L 162 25 L 169 7 L 176 36 L 184 17 L 194 26 L 201 5 L 208 35 L 217 18 L 227 25 L 234 6 L 241 36 L 250 17 L 260 26 L 267 4 L 274 35 L 283 18 L 295 24 L 302 7 L 310 34 L 320 20"
-              : "M 0 20 L 10 20 L 14 18 L 18 20 L 22 20 L 25 24 L 28 6 L 32 34 L 35 20 L 40 20 L 45 16 L 51 20 L 68 20 L 78 20 L 82 18 L 86 20 L 90 20 L 93 25 L 97 5 L 101 35 L 104 20 L 109 20 L 114 15 L 120 20 L 138 20 L 148 20 L 152 18 L 156 20 L 160 20 L 163 24 L 167 7 L 171 33 L 174 20 L 179 20 L 184 16 L 190 20 L 208 20 L 218 20 L 222 18 L 226 20 L 230 20 L 233 25 L 237 5 L 241 35 L 244 20 L 249 20 L 254 15 L 260 20 L 278 20 L 288 20 L 292 18 L 296 20 L 300 20 L 303 24 L 307 6 L 311 34 L 314 20 L 320 20"
-          }
-          stroke={strokeColor}
-          strokeWidth="1.6"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          filter={`url(#${glowId})`}
-          className={isHazard ? "animate-oscilloscope-fast" : "animate-oscilloscope"}
-        />
-      </svg>
+            <path
+              d={isHazard ? ECG_HAZARD_PATH : ECG_NORMAL_PATH}
+              stroke={strokeColor}
+              strokeWidth="1.75"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              filter={`url(#${glowId})`}
+            />
+          </svg>
+        </div>
+      </div>
     </div>
   );
 }

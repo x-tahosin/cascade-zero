@@ -99,17 +99,24 @@ code, pre, .font-mono {
   animation: breathRose 1.4s ease-in-out infinite;
 }
 
-/* Oscilloscope Jitter Waveform Motion */
-@keyframes oscilloscopeWave {
-  0% { transform: translateY(0px) scaleY(1); }
-  25% { transform: translateY(-1px) scaleY(1.35); }
-  50% { transform: translateY(1px) scaleY(0.75); }
-  75% { transform: translateY(-2px) scaleY(1.2); }
-  100% { transform: translateY(0px) scaleY(1); }
+/* Continuous Left-to-Right ECG Cardiac Waveform Flow */
+@keyframes ecgScrollLeftToRight {
+  0% {
+    transform: translate3d(-80px, 0, 0);
+  }
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
 }
 
-.animate-oscilloscope {
-  animation: oscilloscopeWave 0.9s ease-in-out infinite;
+.animate-ecg-flow {
+  animation: ecgScrollLeftToRight 1.25s linear infinite;
+  will-change: transform;
+}
+
+.animate-ecg-flow-fast {
+  animation: ecgScrollLeftToRight 0.65s linear infinite;
+  will-change: transform;
 }
 
 /* Radar Sweep Beam */
