@@ -33,7 +33,7 @@ That is how **CASCADE-ZERO** was born.
 
 CASCADE-ZERO is a real-time, browser-native causal disaster simulator and release governance console. It simulates high-stakes distributed systems deployments (Fintech rails, OAuth cutovers, database shard migrations, and edge CDNs) where delays cascade topologically through interconnected nodes.
 
-![CASCADE-ZERO Causal Horizon Simulator](https://raw.githubusercontent.com/x-tahosin/cascade-zero/main/public/screenshots/screen_simulator.png)
+![CASCADE-ZERO Causal Horizon Simulator](https://raw.githubusercontent.com/x-tahosin/cascade-zero/main/public/screenshots/live_screen_simulator.png)
 
 ### Key Capabilities
 
@@ -193,27 +193,27 @@ Every view in CASCADE-ZERO was captured directly from our live production releas
 ### 1. The Interactive War Room Overview
 The central command desk displaying live telemetry, active incident vectors, and real-time SLA degradation meters.
 
-![Interactive War Room](https://raw.githubusercontent.com/x-tahosin/cascade-zero/main/public/screenshots/screen_overview.png)
+![Interactive War Room](https://raw.githubusercontent.com/x-tahosin/cascade-zero/main/public/screenshots/live_screen_overview.png)
 
 ### 2. Causal Horizon Simulator & Time Scrubber
 Drag the 24-hour timeline scrubber to watch deadlines collide and cascade across the distributed cluster.
 
-![Causal Simulator](https://raw.githubusercontent.com/x-tahosin/cascade-zero/main/public/screenshots/screen_simulator.png)
+![Causal Simulator](https://raw.githubusercontent.com/x-tahosin/cascade-zero/main/public/screenshots/live_screen_simulator.png)
 
 ### 3. Chaos Monkey Fault Injections
 One-click real-world incident simulations: Postgres shard contention, HSM key desynchronization, and gateway timeouts. Notice the waveform and nodes light up crimson.
 
-![Chaos Monkey Active](https://raw.githubusercontent.com/x-tahosin/cascade-zero/main/public/screenshots/screen_chaos_active.png)
+![Chaos Monkey Active](https://raw.githubusercontent.com/x-tahosin/cascade-zero/main/public/screenshots/live_screen_chaos_active.png)
 
 ### 4. Sanity Content Lake & Live GROQ Runner
 Inspect live Sanity schema definitions, execute custom GROQ queries directly against Content Lake, and audit transaction mutations.
 
-![Sanity Lake Inspector](https://raw.githubusercontent.com/x-tahosin/cascade-zero/main/public/screenshots/screen_lake.png)
+![Sanity Lake Inspector](https://raw.githubusercontent.com/x-tahosin/cascade-zero/main/public/screenshots/live_screen_lake.png)
 
 ### 5. Multi-Sig Governance & Safe Cutover Deployment
 The release cannot ship under elevated DEFCON without 3-of-3 multi-sig officer approvals and automated post-mortem generation.
 
-![Incident Governance Workflow](https://raw.githubusercontent.com/x-tahosin/cascade-zero/main/public/screenshots/screen_governance.png)
+![Incident Governance Workflow](https://raw.githubusercontent.com/x-tahosin/cascade-zero/main/public/screenshots/live_screen_governance.png)
 
 ---
 

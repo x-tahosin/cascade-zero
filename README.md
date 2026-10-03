@@ -36,15 +36,15 @@ By leveraging **Sanity Content Lake** as a graph database and state engine rathe
 
 | Interactive War Room & Causal Graph | Real-time Causal Horizon Simulator |
 | :---: | :---: |
-| ![Overview](public/screenshots/screen_overview.png) | ![Simulator](public/screenshots/screen_simulator.png) |
+| ![Overview](public/screenshots/live_screen_overview.png) | ![Simulator](public/screenshots/live_screen_simulator.png) |
 
 | Chaos Monkey Fault Injection Active | Sanity Lake Schema & Live GROQ Runner |
 | :---: | :---: |
-| ![Chaos Mode](public/screenshots/screen_chaos_active.png) | ![Sanity Lake](public/screenshots/screen_lake.png) |
+| ![Chaos Mode](public/screenshots/live_screen_chaos_active.png) | ![Sanity Lake](public/screenshots/live_screen_lake.png) |
 
 | Incident Governance Workflow & Approvals |
 | :---: |
-| ![Governance](public/screenshots/screen_governance.png) |
+| ![Governance](public/screenshots/live_screen_governance.png) |
 
 ---
 
