@@ -1,6 +1,6 @@
 ---
 title: What If Your Content Lake Ran a DEFCON 1 War Room? Vibe-Coding CASCADE-ZERO with Sanity Workflows
-published: false
+published: true
 description: Turning Sanity Content Lake into an autonomous causal incident simulator and DEFCON 1 war room where upstream milestone slips trigger real-time cascading failures across a directed topological DAG.
 tags: sanitychallenge, sanity, ai, webdev
 cover_image: https://raw.githubusercontent.com/x-tahosin/cascade-zero/main/public/cover_tahosin.jpg
