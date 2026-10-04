@@ -233,7 +233,7 @@ The central command desk displaying live telemetry, active incident vectors, and
 ### 2. Sanity App SDK Studio & Governance Hub
 The dedicated developer and operator environment powered by `@sanity/sdk-react v3.7.0`. Features 6 reactive document handles, sub-8ms optimistic mutation sliders, live perspective projections (`published` vs `drafts` vs `raw`), and 2/2 multi-sig consensus attestation.
 
-![Sanity App SDK Studio](https://raw.githubusercontent.com/x-tahosin/cascade-zero/main/public/screenshots/live_screen_app_sdk.png)
+![Sanity App SDK Studio](https://raw.githubusercontent.com/x-tahosin/cascade-zero/main/public/screenshots/live_screen_app_sdk_studio.png)
 
 ### 3. Causal Horizon Simulator & Time Scrubber
 Drag the 24-hour timeline scrubber to watch deadlines collide and cascade across the distributed cluster. Notice the integrated Sanity App SDK Dock at the top for real-time buffer management.
