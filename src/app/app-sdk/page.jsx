@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
+import confetti from 'canvas-confetti';
 import { 
   Shield, 
   Database, 
@@ -24,16 +25,15 @@ import {
   Key, 
   FileCode, 
   Clock,
-  GitBranch
+  GitBranch,
+  X
 } from 'lucide-react';
-import confetti from 'canvas-confetti';
 import { sounds } from '../../engine/soundFx';
 import { ECG_NORMAL_PATH, ECG_HAZARD_PATH } from '../../engine/ecgPaths';
 import { appSdk, INITIAL_SDK_DOCUMENTS } from '../../sanity/appSdk';
-import AppSdkHandlesPanel from '../../components/AppSdkHandlesPanel';
 import AppSdkModal from '../../components/modals/AppSdkModal';
 
-// Continuous Medical / Telemetry Heartbeat (ECG) Icon
+// Exact Medical / Telemetry Heartbeat (ECG) Icon matching main website
 function HeartbeatIcon({ className = "w-4 h-4 text-emerald-400" }) {
   return (
     <svg viewBox="0 0 24 24" fill="none" className={className}>
@@ -48,7 +48,23 @@ function HeartbeatIcon({ className = "w-4 h-4 text-emerald-400" }) {
   );
 }
 
-// Continuous Left-to-Right ECG Cardiac Waveform Monitor
+// HSM Divergence Arrow Icon matching main website
+function HsmDivergenceIcon({ className = "w-4 h-4 text-emerald-400" }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" className={className}>
+      <path
+        d="M4 12h8m0 0l-3-3m3 3l-3 3M16 8l4 4-4 4"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <circle cx="16" cy="12" r="1.5" fill="currentColor" />
+    </svg>
+  );
+}
+
+// Authentic Continuous Left-to-Right ECG Heartbeat Monitor Waveform matching main website
 function EcgHeartbeatWaveform({ isHazard = false }) {
   const strokeColor = isHazard ? '#f43f5e' : '#10b981';
   const glowId = isHazard ? 'appSdkEcgHazardGlow' : 'appSdkEcgNormalGlow';
@@ -68,7 +84,7 @@ function EcgHeartbeatWaveform({ isHazard = false }) {
         <div className="w-full h-[1px] bg-emerald-400" />
       </div>
 
-      {/* Edge Fade Mask */}
+      {/* Smooth edge fade mask so waves don't abruptly clip at container borders */}
       <div
         className="w-full h-full overflow-hidden relative flex items-center"
         style={{
@@ -90,6 +106,7 @@ function EcgHeartbeatWaveform({ isHazard = false }) {
                 <feComposite in="SourceGraphic" in2="blur" operator="over" />
               </filter>
             </defs>
+
             <path
               d={isHazard ? ECG_HAZARD_PATH : ECG_NORMAL_PATH}
               stroke={strokeColor}
@@ -105,21 +122,21 @@ function EcgHeartbeatWaveform({ isHazard = false }) {
   );
 }
 
-// Dedicated Causal Vector Connector Component between Node Cards
+// Dedicated Causal Vector Connector Component matching simulator/page.jsx exactly
 function NodeConnector({ isHazard, variant = 'auth_db' }) {
   const activeStroke = isHazard ? '#f43f5e' : '#10b981';
   const subStroke = isHazard ? '#fb7185' : '#34d399';
   const darkStroke = isHazard ? '#ea580c' : '#059669';
 
   return (
-    <div className="hidden sm:flex items-center justify-center shrink-0 w-8 sm:w-12 lg:w-14 h-[180px] self-start relative select-none">
+    <div className="hidden sm:flex items-center justify-center shrink-0 w-8 sm:w-12 lg:w-14 h-[208px] self-start relative select-none">
       <svg
         className="w-full h-full overflow-visible pointer-events-none"
-        viewBox="0 0 60 180"
+        viewBox="0 0 60 208"
         fill="none"
       >
         <defs>
-          <filter id={`sdkSimGlow_${variant}`} x="-30%" y="-30%" width="160%" height="160%">
+          <filter id={`sdkGlow_${variant}`} x="-30%" y="-30%" width="160%" height="160%">
             <feGaussianBlur stdDeviation="2.5" result="blur" />
             <feComposite in="SourceGraphic" in2="blur" operator="over" />
           </filter>
@@ -139,14 +156,20 @@ function NodeConnector({ isHazard, variant = 'auth_db' }) {
               d="M 0 62 L 54 62"
               stroke={activeStroke}
               strokeWidth="2.2"
-              filter={`url(#sdkSimGlow_${variant})`}
+              filter={`url(#sdkGlow_${variant})`}
             />
             <circle
               cx="55"
               cy="62"
               r="2.8"
               fill={activeStroke}
-              filter={`url(#sdkSimGlow_${variant})`}
+              filter={`url(#sdkGlow_${variant})`}
+            />
+            <path
+              d="M 0 92 C 16 112, 30 142, 60 142"
+              stroke={darkStroke}
+              strokeWidth="1.6"
+              opacity="0.9"
             />
           </>
         )}
@@ -158,7 +181,7 @@ function NodeConnector({ isHazard, variant = 'auth_db' }) {
               cy="62"
               r="2.8"
               fill={activeStroke}
-              filter={`url(#sdkSimGlow_${variant})`}
+              filter={`url(#sdkGlow_${variant})`}
             />
             <path
               d="M 0 62 C 18 40, 38 28, 60 36"
@@ -172,7 +195,19 @@ function NodeConnector({ isHazard, variant = 'auth_db' }) {
               d="M 0 62 C 18 60, 40 54, 60 54"
               stroke={activeStroke}
               strokeWidth="2.0"
-              filter={`url(#sdkSimGlow_${variant})`}
+              filter={`url(#sdkGlow_${variant})`}
+            />
+            <path
+              d="M 0 62 C 18 68, 40 72, 60 72"
+              stroke={activeStroke}
+              strokeWidth="1.8"
+              opacity="0.9"
+            />
+            <path
+              d="M 0 62 C 14 92, 30 142, 60 142"
+              stroke={darkStroke}
+              strokeWidth="1.6"
+              opacity="0.9"
             />
           </>
         )}
@@ -183,7 +218,7 @@ function NodeConnector({ isHazard, variant = 'auth_db' }) {
               d="M 0 46 C 24 50, 36 60, 60 62"
               stroke={activeStroke}
               strokeWidth="2.0"
-              filter={`url(#sdkSimGlow_${variant})`}
+              filter={`url(#sdkGlow_${variant})`}
             />
             <path
               d="M 0 62 C 20 62, 40 62, 54 62"
@@ -196,7 +231,13 @@ function NodeConnector({ isHazard, variant = 'auth_db' }) {
               cy="62"
               r="2.8"
               fill={activeStroke}
-              filter={`url(#sdkSimGlow_${variant})`}
+              filter={`url(#sdkGlow_${variant})`}
+            />
+            <path
+              d="M 0 84 C 20 100, 36 130, 60 142"
+              stroke={darkStroke}
+              strokeWidth="1.6"
+              opacity="0.9"
             />
           </>
         )}
@@ -215,14 +256,20 @@ function NodeConnector({ isHazard, variant = 'auth_db' }) {
               d="M 0 62 L 54 62"
               stroke={activeStroke}
               strokeWidth="2.2"
-              filter={`url(#sdkSimGlow_${variant})`}
+              filter={`url(#sdkGlow_${variant})`}
             />
             <circle
               cx="55"
               cy="62"
               r="2.8"
               fill={activeStroke}
-              filter={`url(#sdkSimGlow_${variant})`}
+              filter={`url(#sdkGlow_${variant})`}
+            />
+            <path
+              d="M 0 142 C 24 130, 40 84, 60 76"
+              stroke={darkStroke}
+              strokeWidth="1.6"
+              opacity="0.9"
             />
           </>
         )}
@@ -234,15 +281,18 @@ function NodeConnector({ isHazard, variant = 'auth_db' }) {
 export default function AppSdkPage() {
   const [selectedNode, setSelectedNode] = useState('AUTH');
   const [activeFault, setActiveFault] = useState('none');
+  const [timeDrift, setTimeDrift] = useState(142);
+  const [isDrawerOpen, setIsDrawerOpen] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [liveUtc, setLiveUtc] = useState('10:23:41 UTC');
   const [perspective, setPerspective] = useState(appSdk.perspective);
   const [isSigning, setIsSigning] = useState(false);
   const [signatures, setSignatures] = useState([]);
+  const [events, setEvents] = useState([]);
   const [operatorId, setOperatorId] = useState('SECOPS-CMD-01');
   const [operatorRole, setOperatorRole] = useState('Lead Incident Commander');
 
-  // Real-time UTC ticking clock
+  // Real-time ticking UTC clock
   useEffect(() => {
     const updateUtc = () => {
       const now = new Date();
@@ -261,18 +311,168 @@ export default function AppSdkPage() {
     const unsub = appSdk.subscribe(snapshot => {
       setPerspective(snapshot.perspective);
       setSignatures(snapshot.signatures);
+      setEvents(snapshot.events);
     });
     return () => {
       unsub();
     };
   }, []);
 
+  const nodes = [
+    {
+      id: 'AUTH',
+      name: 'Authentication Service',
+      region: 'us-east-1',
+      baseHealth: 99.95,
+      docId: 'sec-auth-001',
+      icon: <Shield className="w-4 h-4 text-emerald-400" />,
+      upstream: [
+        { name: 'IAM Token Service', health: '99.99%' },
+        { name: 'DNS Resolver', health: '99.95%' },
+        { name: 'KMS Key Store', health: '99.98%' }
+      ],
+      duration: '420 ms',
+      jitter: '± 18.7 ms',
+      blastCount: 12,
+      p95: '+312 ms',
+      failProb: '0.38%'
+    },
+    {
+      id: 'DATABASE',
+      name: 'Primary Cluster',
+      region: 'us-east-1',
+      baseHealth: 99.99,
+      docId: 'db-mig-002',
+      icon: <Database className="w-4 h-4 text-emerald-400" />,
+      upstream: [
+        { name: 'Aurora Postgres 16', health: '99.99%' },
+        { name: 'EBS NVMe Volume', health: '99.99%' },
+        { name: 'VPC Peering Mesh', health: '99.98%' }
+      ],
+      duration: '260 ms',
+      jitter: '± 12.3 ms',
+      blastCount: 18,
+      p95: '+480 ms',
+      failProb: '1.24%'
+    },
+    {
+      id: 'PAYMENTS',
+      name: 'Stripe Gateway',
+      region: 'us-east-1',
+      baseHealth: 99.90,
+      docId: 'fin-pay-003',
+      icon: <CreditCard className="w-4 h-4 text-emerald-400" />,
+      upstream: [
+        { name: 'Stripe API v2026', health: '99.94%' },
+        { name: 'Webhook Verifier', health: '99.92%' },
+        { name: 'Double Entry Ledger', health: '99.99%' }
+      ],
+      duration: '680 ms',
+      jitter: '± 34.2 ms',
+      blastCount: 15,
+      p95: '+520 ms',
+      failProb: '2.10%'
+    },
+    {
+      id: 'CDN',
+      name: 'Edge Distribution',
+      region: 'global',
+      baseHealth: 99.97,
+      docId: 'net-cdn-005',
+      icon: <Network className="w-4 h-4 text-emerald-400" />,
+      upstream: [
+        { name: 'Cloudflare Anycast', health: '99.99%' },
+        { name: 'Edge WAF Engine', health: '99.97%' },
+        { name: 'TLS 1.3 Handshake', health: '99.96%' }
+      ],
+      duration: '180 ms',
+      jitter: '± 8.4 ms',
+      blastCount: 24,
+      p95: '+140 ms',
+      failProb: '0.15%'
+    },
+    {
+      id: 'WEBHOOKS',
+      name: 'Event Dispatch',
+      region: 'us-east-1',
+      baseHealth: 99.93,
+      docId: 'evt-hook-006',
+      icon: <Share2 className="w-4 h-4 text-emerald-400" />,
+      upstream: [
+        { name: 'SQS FIFO Queue', health: '99.98%' },
+        { name: 'Dead Letter Pool', health: '99.99%' },
+        { name: 'Signing Key Vault', health: '99.95%' }
+      ],
+      duration: '310 ms',
+      jitter: '± 15.6 ms',
+      blastCount: 9,
+      p95: '+290 ms',
+      failProb: '0.45%'
+    }
+  ];
+
+  const currentNode = nodes.find(n => n.id === selectedNode) || nodes[0];
+  const activeDoc = appSdk.getDocument(currentNode.docId) || {};
+
+  // Dynamic health calculation based on active fault & time drift
+  const getNodeHealth = (nodeId, baseHealth) => {
+    let penalty = 0;
+    if (activeFault === 'postgres') {
+      if (nodeId === 'DATABASE') penalty += 18.5;
+      if (nodeId === 'PAYMENTS') penalty += 11.2;
+      if (nodeId === 'WEBHOOKS') penalty += 7.4;
+    } else if (activeFault === 'stripe') {
+      if (nodeId === 'PAYMENTS') penalty += 22.8;
+      if (nodeId === 'WEBHOOKS') penalty += 9.6;
+    } else if (activeFault === 'hsm') {
+      if (nodeId === 'AUTH') penalty += 19.4;
+      if (nodeId === 'DATABASE') penalty += 6.5;
+    } else if (activeFault === 'soc2') {
+      if (nodeId === 'WEBHOOKS') penalty += 14.2;
+      if (nodeId === 'CDN') penalty += 5.8;
+    }
+
+    if (timeDrift > 200) {
+      penalty += (timeDrift / 100) * 1.8;
+    }
+
+    const calculated = Math.max(68.4, baseHealth - penalty);
+    return `${calculated.toFixed(2)}%`;
+  };
+
+  const getDynamicDuration = (baseDuration) => {
+    let base = parseInt(baseDuration);
+    if (activeFault !== 'none') base += 340;
+    if (timeDrift > 200) base += Math.abs(timeDrift);
+    return `${base} ms`;
+  };
+
+  const getDynamicJitter = (baseJitter) => {
+    if (activeFault !== 'none') return '± 46.8 ms';
+    return baseJitter;
+  };
+
+  const getDynamicP95 = (baseP95) => {
+    if (activeFault !== 'none') return '+740 ms';
+    return baseP95;
+  };
+
+  const handleSlaSliderChange = (newVal) => {
+    sounds.playClick();
+    const val = parseInt(newVal, 10);
+    appSdk.mutateOptimistic(currentNode.docId, 'deadline', {
+      slaBufferMinutes: val,
+      status: val >= 30 ? 'nominal' : 'degraded',
+      doomsdayScore: Math.max(5, Math.round(30 - (val * 0.4)))
+    });
+  };
+
   const handleSignRelease = () => {
     sounds.playClick();
     setIsSigning(true);
 
     setTimeout(() => {
-      const sig = appSdk.signAndApproveRelease(operatorId, operatorRole, 'Emergency SLA Buffers Verified & Attested');
+      appSdk.signAndApproveRelease(operatorId, operatorRole, 'Emergency SLA Buffers Verified & Attested');
       setIsSigning(false);
       sounds.playChime();
 
@@ -287,6 +487,11 @@ export default function AppSdkPage() {
     }, 600);
   };
 
+  const handleSwitchPerspective = (newP) => {
+    sounds.playClick();
+    appSdk.setPerspective(newP);
+  };
+
   const handleExportAudit = () => {
     sounds.playClick();
     const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(appSdk.exportAuditTrailJson());
@@ -298,55 +503,130 @@ export default function AppSdkPage() {
     downloadAnchor.remove();
   };
 
-  const defconLevel = activeFault !== 'none' ? 2 : 5;
-  const isHazard = activeFault !== 'none';
+  const renderNodeCard = (node) => {
+    const isSelected = selectedNode === node.id;
+    const health = getNodeHealth(node.id, node.baseHealth);
+    const isFailing = parseFloat(health) < 95;
 
-  const nodes = [
-    { id: 'AUTH', name: 'Authentication Core', region: 'us-east-1', health: isHazard && activeFault === 'hsm' ? '82.40%' : '99.95%', icon: <Shield className="w-4 h-4 text-emerald-400" />, docId: 'sec-auth-001' },
-    { id: 'DATABASE', name: 'Primary Aurora Cluster', region: 'us-east-1', health: isHazard && activeFault === 'postgres' ? '74.15%' : '99.99%', icon: <Database className="w-4 h-4 text-emerald-400" />, docId: 'db-mig-002' },
-    { id: 'PAYMENTS', name: 'Stripe Settlement Rail', region: 'us-east-1', health: isHazard && activeFault === 'stripe' ? '71.20%' : '99.90%', icon: <CreditCard className="w-4 h-4 text-emerald-400" />, docId: 'fin-pay-003' },
-    { id: 'CDN', name: 'Edge Distribution', region: 'global', health: '99.97%', icon: <Network className="w-4 h-4 text-emerald-400" />, docId: 'net-cdn-005' },
-    { id: 'WEBHOOKS', name: 'Event Dispatch Vault', region: 'us-east-1', health: isHazard && activeFault === 'soc2' ? '84.60%' : '99.93%', icon: <Share2 className="w-4 h-4 text-emerald-400" />, docId: 'evt-hook-006' }
-  ];
+    return (
+      <div
+        key={node.id}
+        className="flex flex-col items-center flex-1 min-w-[112px] sm:min-w-[124px] max-w-[148px] shrink-0 select-none"
+      >
+        {/* Top Tier: Service Card matching simulator exactly */}
+        <div
+          onClick={() => {
+            sounds.playPing();
+            setSelectedNode(node.id);
+            setIsDrawerOpen(true);
+          }}
+          className={`w-full rounded-2xl p-3 sm:p-3.5 transition-all duration-300 border flex flex-col justify-between h-[114px] cursor-pointer text-left ${
+            isSelected
+              ? 'border-emerald-400 bg-[#081814] shadow-[0_0_24px_rgba(16,185,129,0.35)] ring-1 ring-emerald-400/80 scale-[1.02]'
+              : isFailing
+              ? 'border-rose-500 bg-rose-950/40 shadow-[0_0_24px_rgba(244,63,94,0.4)] ring-1 ring-rose-500/80 animate-breath-rose'
+              : 'border-emerald-500/35 hover:border-emerald-400/80 bg-[#071311] hover:bg-[#0a1815] hover:shadow-[0_0_20px_rgba(16,185,129,0.22)]'
+          }`}
+        >
+          {/* Top-Left Line-Art Icon */}
+          <div className="flex items-center">
+            <div className={`transition-colors ${isFailing ? 'text-rose-400' : 'text-emerald-400'}`}>
+              {isFailing ? <AlertTriangle className="w-5 h-5 text-rose-400 animate-pulse" /> : React.cloneElement(node.icon, { className: "w-5 h-5 text-emerald-400" })}
+            </div>
+          </div>
+
+          {/* Service Title & Subtitle */}
+          <div>
+            <h3 className="text-xs sm:text-sm font-sans font-black tracking-wider text-slate-100 mb-0.5 uppercase">
+              {node.id}
+            </h3>
+            <p className="text-[10px] sm:text-[10.5px] leading-tight text-slate-400 font-sans">
+              {node.name}
+            </p>
+          </div>
+        </div>
+
+        {/* Bottom Tier: Metadata Pod with stacked REGION and HEALTH */}
+        <div className="w-full mt-2.5 rounded-xl border border-slate-800/90 bg-[#070e0d] px-3.5 py-2 font-mono text-left">
+          <div>
+            <div className="text-[9px] uppercase font-mono text-slate-400 font-bold tracking-wider mb-0.5">
+              REGION
+            </div>
+            <div className="text-xs font-mono text-slate-100 font-medium">
+              {node.region}
+            </div>
+          </div>
+
+          <div className="border-b border-slate-800/80 my-1.5" />
+
+          <div>
+            <div className="text-[9px] uppercase font-mono text-slate-400 font-bold tracking-wider mb-0.5">
+              HEALTH
+            </div>
+            <div className={`text-xs font-mono font-bold ${isFailing ? 'text-rose-400' : 'text-emerald-400'}`}>
+              {health}
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  };
 
   return (
-    <div className="flex-1 max-w-[1400px] mx-auto w-full px-4 sm:px-6 lg:px-8 py-5 flex flex-col gap-6 relative font-mono">
+    <div className="flex-1 max-w-[1400px] mx-auto w-full px-4 sm:px-6 lg:px-8 py-5 flex flex-col gap-6 relative font-sans">
       
-      {/* Ambient Cybernetic Atmosphere Glows */}
+      {/* Ambient Glows */}
       <div className="absolute top-12 left-1/4 w-[500px] h-[300px] bg-emerald-500/8 rounded-full blur-[140px] pointer-events-none" />
       <div className="absolute bottom-12 right-12 w-[450px] h-[300px] bg-emerald-500/6 rounded-full blur-[140px] pointer-events-none" />
 
       {/* Top Header Row with System Title, Badges, and Navigation */}
-      <div className="flex flex-wrap items-center justify-between gap-4 border-b border-slate-800/80 pb-5">
+      <div className="flex flex-wrap items-center justify-between gap-4 border-b border-slate-800/80 pb-4">
         <div>
           <div className="flex items-center gap-2 mb-1.5">
-            <span className="text-[10px] text-emerald-400 font-bold tracking-widest uppercase">
+            <span className="text-[10px] text-emerald-400 font-mono font-bold tracking-widest uppercase">
               SANITY APP SDK RUNTIME ENVIRONMENT
             </span>
-            <span className="text-[9px] bg-emerald-950 text-emerald-300 border border-emerald-500/30 px-2 py-0.5 rounded font-bold">
+            <span className="text-[9px] bg-emerald-950 text-emerald-300 border border-emerald-500/30 px-2 py-0.5 rounded font-mono font-bold">
               @sanity/sdk-react v3.7.0
             </span>
-            <span className="hidden sm:inline-block text-[9px] bg-slate-900 text-slate-300 border border-slate-700 px-2 py-0.5 rounded">
-              Content Lake Perspective: <strong className="text-emerald-400 uppercase">{perspective}</strong>
+            <span className="hidden sm:inline-block text-[9px] bg-slate-900 text-slate-300 border border-slate-700 px-2 py-0.5 rounded font-mono">
+              Projection: <strong className="text-emerald-400 uppercase">{perspective}</strong>
             </span>
           </div>
 
-          <h1 className="text-xl sm:text-2xl font-sans font-black text-slate-100 tracking-tight uppercase">
-            SANITY APP SDK WAR ROOM STUDIO
+          <h1 className="text-xl sm:text-2xl font-black text-slate-100 tracking-tight uppercase font-sans">
+            SANITY APP SDK // AUTONOMOUS WAR ROOM
           </h1>
-          <p className="text-xs text-slate-400 font-sans mt-0.5 max-w-2xl">
+          <p className="text-xs text-slate-400 mt-0.5 max-w-2xl font-sans">
             Autonomous causal incident orchestration powered by Sanity Document Handles, sub-8ms optimistic patches, and live Content Lake revision streams.
           </p>
         </div>
 
         {/* Action Controls */}
         <div className="flex items-center gap-2.5 shrink-0 flex-wrap">
+          {/* Perspective Pills */}
+          <div className="flex items-center rounded-xl border border-slate-800 bg-[#060a12] p-1 text-[11px] font-mono">
+            {['published', 'drafts', 'raw'].map((p) => (
+              <button
+                key={p}
+                onClick={() => handleSwitchPerspective(p)}
+                className={`px-2.5 py-1 rounded-lg uppercase tracking-wider font-bold transition-all cursor-pointer ${
+                  perspective === p
+                    ? 'bg-emerald-500 text-slate-950 shadow-[0_0_12px_rgba(16,185,129,0.4)]'
+                    : 'text-slate-400 hover:text-slate-200'
+                }`}
+              >
+                {p}
+              </button>
+            ))}
+          </div>
+
           <button
             onClick={() => {
               sounds.playClick();
               setIsModalOpen(true);
             }}
-            className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs transition-all shadow-[0_0_20px_rgba(16,185,129,0.35)] cursor-pointer"
+            className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs transition-all shadow-[0_0_20px_rgba(16,185,129,0.35)] cursor-pointer font-mono"
           >
             <Activity className="w-3.5 h-3.5" />
             <span>Operations Hub</span>
@@ -355,15 +635,15 @@ export default function AppSdkPage() {
           <Link
             href="/simulator"
             onClick={() => sounds.playClick()}
-            className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl border border-slate-800 bg-[#060a12] hover:bg-slate-900 text-slate-300 hover:text-emerald-400 text-xs transition-all cursor-pointer"
+            className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl border border-slate-800 bg-[#060a12] hover:bg-slate-900 text-slate-300 hover:text-emerald-400 text-xs transition-all cursor-pointer font-mono"
           >
-            <span>Launch Simulator</span>
+            <span>Simulator</span>
             <ArrowRight className="w-3.5 h-3.5 text-emerald-400" />
           </Link>
 
           <button
             onClick={handleExportAudit}
-            title="Export SOC2 Audit Log"
+            title="Export SOC2 Audit Log as JSON"
             className="p-2 rounded-xl border border-slate-800 bg-[#060a12] hover:bg-slate-900 text-slate-400 hover:text-emerald-400 text-xs transition-all cursor-pointer"
           >
             <Download className="w-4 h-4" />
@@ -371,192 +651,382 @@ export default function AppSdkPage() {
         </div>
       </div>
 
-      {/* DEFCON Live Telemetry Bar & Continuous Medical ECG Heartbeat Waveform */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-center p-3.5 rounded-2xl border border-slate-800/90 bg-[#070b13]/95 shadow-xl">
-        {/* DEFCON Gauge */}
-        <div className="lg:col-span-4 flex items-center justify-between gap-3 px-3 py-1 border-r border-slate-800/80">
-          <div className="flex items-center gap-2.5">
-            <div className={`w-3 h-3 rounded-full ${defconLevel === 5 ? 'bg-emerald-400 shadow-[0_0_8px_#10b981]' : 'bg-rose-500 shadow-[0_0_8px_#f43f5e] animate-pulse'}`} />
-            <div>
-              <div className="text-[9px] uppercase font-bold text-slate-400 tracking-wider">
-                OPERATIONAL DEFCON
-              </div>
-              <div className={`text-sm font-bold tracking-wider ${defconLevel === 5 ? 'text-emerald-400' : 'text-rose-400'}`}>
-                {defconLevel === 5 ? 'DEFCON 5 // NOMINAL STABLE' : 'DEFCON 2 // INCIDENT DRIFT'}
-              </div>
-            </div>
+      {/* Injected Fault Warning Banner if active */}
+      {activeFault !== 'none' && (
+        <div className="flex items-center justify-between gap-3 px-4 py-2 rounded-xl border border-rose-500/60 bg-rose-950/40 text-rose-300 font-mono text-xs animate-breath-rose shadow-[0_0_20px_rgba(244,63,94,0.35)] relative z-20">
+          <div className="flex items-center gap-2">
+            <Flame className="w-4 h-4 text-rose-400 animate-bounce" />
+            <span className="font-bold">INJECTED FAULT: {activeFault.toUpperCase()} (Cascading Delay Active)</span>
           </div>
-
-          <div className="text-right">
-            <div className="text-[9px] text-slate-400 font-bold uppercase">LIVE UTC</div>
-            <div className="text-xs text-slate-200 font-bold">{liveUtc}</div>
-          </div>
+          <button
+            onClick={() => setActiveFault('none')}
+            className="text-[10px] uppercase font-bold text-rose-300 hover:text-white underline cursor-pointer"
+          >
+            Clear Fault
+          </button>
         </div>
+      )}
 
-        {/* Continuous Flowing ECG Heartbeat Waveform */}
-        <div className="lg:col-span-8 flex items-center gap-3">
-          <div className="text-[9px] uppercase font-bold text-slate-400 tracking-wider shrink-0 flex items-center gap-1.5">
-            <HeartbeatIcon className="w-3.5 h-3.5 text-emerald-400" />
-            <span>CARDIAC TELEMETRY:</span>
-          </div>
-          <div className="flex-1">
-            <EcgHeartbeatWaveform isHazard={isHazard} />
-          </div>
-        </div>
-      </div>
-
-      {/* Causal Horizon DAG: Live Interactive Nodes */}
-      <div className="rounded-2xl border border-slate-800/90 bg-[#070b13]/95 p-5 shadow-2xl">
-        <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
-          <div>
-            <h2 className="text-sm font-sans font-bold tracking-wider text-slate-100 uppercase">
-              CAUSAL HORIZON // SANITY DOCUMENT TOPOLOGY
+      {/* MAIN TOP SECTION: DAG on Left (No enclosing box!), Drawer on Right matching simulator exactly */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start relative z-10 w-full">
+        
+        {/* Left: DAG Area - FLOATS DIRECTLY ON PAGE BACKGROUND WITHOUT ENCLOSING BOX */}
+        <div className={`${isDrawerOpen ? 'lg:col-span-8' : 'lg:col-span-12'} flex flex-col justify-center min-h-[300px]`}>
+          
+          {/* Causal Horizon DAG Title directly on background */}
+          <div className="mb-4">
+            <h2 className="text-sm sm:text-base font-bold font-sans tracking-wider text-slate-100 uppercase">
+              CAUSAL HORIZON DAG // APP SDK TOPOLOGY
             </h2>
-            <p className="text-[11px] text-slate-400 font-sans mt-0.5">
-              Live causal vector edges connecting Sanity document handles across distributed cloud services.
+            <p className="text-xs text-slate-400 font-sans mt-0.5">
+              Cause and effect. Real-time Sanity Document Handles and causal propagation.
             </p>
           </div>
 
-          <div className="text-xs text-slate-400">
-            Click any node to select its active Sanity Document Handle
+          {/* DAG Nodes and Connectors Row directly on background */}
+          <div className="flex items-center justify-between gap-1 sm:gap-2 py-4 overflow-x-auto">
+            {/* Node 1: AUTH */}
+            {renderNodeCard(nodes[0])}
+
+            {/* Connector: AUTH -> DB */}
+            <NodeConnector isHazard={activeFault === 'hsm'} variant="auth_db" />
+
+            {/* Node 2: DATABASE */}
+            {renderNodeCard(nodes[1])}
+
+            {/* Connector: DB -> PAYMENTS (4-trace fan-out) */}
+            <NodeConnector isHazard={activeFault === 'postgres'} variant="db_payments" />
+
+            {/* Node 3: PAYMENTS */}
+            {renderNodeCard(nodes[2])}
+
+            {/* Connector: PAYMENTS -> CDN */}
+            <NodeConnector isHazard={activeFault === 'stripe'} variant="payments_cdn" />
+
+            {/* Node 4: CDN */}
+            {renderNodeCard(nodes[3])}
+
+            {/* Connector: CDN -> WEBHOOKS */}
+            <NodeConnector isHazard={activeFault === 'soc2'} variant="cdn_webhooks" />
+
+            {/* Node 5: WEBHOOKS */}
+            {renderNodeCard(nodes[4])}
           </div>
+
+          {/* Re-open drawer button if closed */}
+          {!isDrawerOpen && (
+            <div className="mt-3">
+              <button
+                onClick={() => setIsDrawerOpen(true)}
+                className="flex items-center gap-2 px-3 py-1.5 rounded-lg border border-slate-800 bg-[#060a12] text-xs font-mono text-emerald-400 hover:border-emerald-500/50 cursor-pointer"
+              >
+                <HeartbeatIcon className="w-3.5 h-3.5 text-emerald-400" />
+                <span>Open Dependency &amp; App SDK Analysis</span>
+              </button>
+            </div>
+          )}
         </div>
 
-        {/* Nodes and SVG Connectors Row */}
-        <div className="flex items-center justify-between gap-1 sm:gap-2 py-2 overflow-x-auto">
-          {/* Node 1: AUTH */}
-          <div 
-            onClick={() => { sounds.playPing(); setSelectedNode('AUTH'); }}
-            className={`flex flex-col items-center flex-1 min-w-[110px] sm:min-w-[124px] max-w-[148px] shrink-0 cursor-pointer select-none`}
-          >
-            <div className={`w-full rounded-2xl p-3 border transition-all duration-200 h-[108px] flex flex-col justify-between ${
-              selectedNode === 'AUTH' ? 'border-emerald-400 bg-[#081814] shadow-[0_0_20px_rgba(16,185,129,0.35)] ring-1 ring-emerald-400' : 'border-slate-800 bg-[#071311] hover:border-slate-700'
-            }`}>
-              <div>
-                <div className="flex items-center justify-between mb-1">
-                  <Shield className="w-4 h-4 text-emerald-400" />
-                  <span className="text-[9px] bg-slate-900 text-slate-400 px-1 py-0.5 rounded font-mono">sec-auth</span>
-                </div>
-                <h3 className="text-xs font-sans font-bold text-slate-100 uppercase">AUTH</h3>
+        {/* Right Drawer: DEPENDENCY ANALYSIS & SANITY APP SDK TELEMETRY */}
+        {isDrawerOpen && (
+          <div className="lg:col-span-4 rounded-xl border border-slate-800/80 bg-[#060a12]/95 backdrop-blur-xl p-4 sm:p-5 shadow-2xl relative animate-in fade-in slide-in-from-right duration-200">
+            
+            {/* Header with Heartbeat Icon, Title, and [X] */}
+            <div className="flex items-center justify-between pb-3 border-b border-slate-800/80 mb-3.5">
+              <div className="flex items-center gap-2">
+                <HeartbeatIcon className="w-4 h-4 text-emerald-400 shrink-0" />
+                <span className="text-xs font-sans font-bold tracking-wider text-slate-100 uppercase">
+                  APP SDK TELEMETRY
+                </span>
               </div>
-              <div className="text-[10px] text-slate-400 leading-tight">Zero-Trust MFA</div>
+              <button
+                onClick={() => setIsDrawerOpen(false)}
+                className="p-1 rounded-lg text-slate-400 hover:text-slate-200 transition-colors cursor-pointer"
+                title="Close Analysis"
+              >
+                <X className="w-3.5 h-3.5" />
+              </button>
             </div>
-            <div className="w-full mt-2 rounded-xl border border-slate-800 bg-[#070e0d] px-3 py-1.5 text-left text-xs font-mono">
-              <div className="text-[9px] text-slate-400">HEALTH</div>
-              <div className="text-emerald-400 font-bold">{nodes[0].health}</div>
+
+            {/* UPSTREAM DEPENDENCIES */}
+            <div className="mb-3.5">
+              <div className="text-[10px] font-mono text-slate-400 uppercase tracking-wider mb-2.5">
+                UPSTREAM DEPENDENCIES
+              </div>
+              <div className="space-y-2 text-xs font-mono">
+                {currentNode.upstream.map((dep, idx) => (
+                  <div key={idx} className="flex items-center justify-between">
+                    <span className="text-slate-300 font-medium">{dep.name}</span>
+                    <span className="text-slate-200 font-bold">{dep.health}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Divider */}
+            <div className="border-b border-slate-800/80 my-3.5" />
+
+            {/* SLIP BUFFER & LIVE ECG HEARTBEAT WAVEFORM */}
+            <div className="mb-3.5">
+              <div className="text-[10px] font-mono text-slate-400 uppercase tracking-wider mb-1.5">
+                SLIP BUFFER
+              </div>
+              <div className="flex items-center justify-between text-xs font-mono mb-2">
+                <span className="text-slate-300 uppercase tracking-wider text-[11px]">DURATION</span>
+                <span className="text-emerald-400 font-bold font-mono text-xs">
+                  {getDynamicDuration(currentNode.duration)}
+                </span>
+              </div>
+
+              {/* Heartbeat Waveform Monitor */}
+              <EcgHeartbeatWaveform isHazard={activeFault !== 'none'} />
+
+              {/* Jitter */}
+              <div className="flex items-center justify-between text-xs font-mono text-slate-300 mt-2">
+                <span className="text-[11px] font-mono">JITTER σ</span>
+                <span className={`font-mono font-medium ${activeFault !== 'none' ? 'text-rose-400' : 'text-slate-200'}`}>
+                  {getDynamicJitter(currentNode.jitter)}
+                </span>
+              </div>
+            </div>
+
+            {/* Divider */}
+            <div className="border-b border-slate-800/80 my-3.5" />
+
+            {/* SANITY DOCUMENT HANDLE CONTROLS */}
+            <div className="mb-3.5 font-mono">
+              <div className="flex items-center justify-between text-[10px] text-slate-400 uppercase tracking-wider mb-2">
+                <span>DOCUMENT HANDLE</span>
+                <span className="text-emerald-400 font-bold">{currentNode.docId}</span>
+              </div>
+
+              <div className="space-y-2">
+                <div className="flex items-center justify-between text-xs">
+                  <span className="text-slate-300">SLA Buffer:</span>
+                  <span className="text-emerald-400 font-bold">+{activeDoc.slaBufferMinutes || 25} min</span>
+                </div>
+
+                <input
+                  type="range"
+                  min="0"
+                  max="90"
+                  step="5"
+                  value={activeDoc.slaBufferMinutes || 25}
+                  onChange={(e) => handleSlaSliderChange(e.target.value)}
+                  className="w-full h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-emerald-400"
+                />
+
+                <div className="flex items-center justify-between text-[10px] text-slate-500 pt-1">
+                  <span>Optimistic: &lt; 8ms</span>
+                  <span>Revision: {activeDoc.committedRev || 'rev-init'}</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Divider */}
+            <div className="border-b border-slate-800/80 my-3.5" />
+
+            {/* Live Ticking UTC Timestamp Footer */}
+            <div className="flex items-center justify-between text-[10px] font-mono text-slate-400">
+              <span>LAST UPDATED</span>
+              <span className="text-slate-300 font-medium">{liveUtc}</span>
             </div>
           </div>
+        )}
 
-          <NodeConnector isHazard={isHazard && activeFault === 'hsm'} variant="auth_db" />
-
-          {/* Node 2: DATABASE */}
-          <div 
-            onClick={() => { sounds.playPing(); setSelectedNode('DATABASE'); }}
-            className={`flex flex-col items-center flex-1 min-w-[110px] sm:min-w-[124px] max-w-[148px] shrink-0 cursor-pointer select-none`}
-          >
-            <div className={`w-full rounded-2xl p-3 border transition-all duration-200 h-[108px] flex flex-col justify-between ${
-              selectedNode === 'DATABASE' ? 'border-emerald-400 bg-[#081814] shadow-[0_0_20px_rgba(16,185,129,0.35)] ring-1 ring-emerald-400' : 'border-slate-800 bg-[#071311] hover:border-slate-700'
-            }`}>
-              <div>
-                <div className="flex items-center justify-between mb-1">
-                  <Database className="w-4 h-4 text-emerald-400" />
-                  <span className="text-[9px] bg-slate-900 text-slate-400 px-1 py-0.5 rounded font-mono">db-mig</span>
-                </div>
-                <h3 className="text-xs font-sans font-bold text-slate-100 uppercase">DATABASE</h3>
-              </div>
-              <div className="text-[10px] text-slate-400 leading-tight">Aurora Primary</div>
-            </div>
-            <div className="w-full mt-2 rounded-xl border border-slate-800 bg-[#070e0d] px-3 py-1.5 text-left text-xs font-mono">
-              <div className="text-[9px] text-slate-400">HEALTH</div>
-              <div className="text-emerald-400 font-bold">{nodes[1].health}</div>
-            </div>
-          </div>
-
-          <NodeConnector isHazard={isHazard && activeFault === 'postgres'} variant="db_payments" />
-
-          {/* Node 3: PAYMENTS */}
-          <div 
-            onClick={() => { sounds.playPing(); setSelectedNode('PAYMENTS'); }}
-            className={`flex flex-col items-center flex-1 min-w-[110px] sm:min-w-[124px] max-w-[148px] shrink-0 cursor-pointer select-none`}
-          >
-            <div className={`w-full rounded-2xl p-3 border transition-all duration-200 h-[108px] flex flex-col justify-between ${
-              selectedNode === 'PAYMENTS' ? 'border-emerald-400 bg-[#081814] shadow-[0_0_20px_rgba(16,185,129,0.35)] ring-1 ring-emerald-400' : 'border-slate-800 bg-[#071311] hover:border-slate-700'
-            }`}>
-              <div>
-                <div className="flex items-center justify-between mb-1">
-                  <CreditCard className="w-4 h-4 text-emerald-400" />
-                  <span className="text-[9px] bg-slate-900 text-slate-400 px-1 py-0.5 rounded font-mono">fin-pay</span>
-                </div>
-                <h3 className="text-xs font-sans font-bold text-slate-100 uppercase">PAYMENTS</h3>
-              </div>
-              <div className="text-[10px] text-slate-400 leading-tight">Stripe Gateway</div>
-            </div>
-            <div className="w-full mt-2 rounded-xl border border-slate-800 bg-[#070e0d] px-3 py-1.5 text-left text-xs font-mono">
-              <div className="text-[9px] text-slate-400">HEALTH</div>
-              <div className="text-emerald-400 font-bold">{nodes[2].health}</div>
-            </div>
-          </div>
-
-          <NodeConnector isHazard={isHazard && activeFault === 'stripe'} variant="payments_cdn" />
-
-          {/* Node 4: CDN */}
-          <div 
-            onClick={() => { sounds.playPing(); setSelectedNode('CDN'); }}
-            className={`flex flex-col items-center flex-1 min-w-[110px] sm:min-w-[124px] max-w-[148px] shrink-0 cursor-pointer select-none`}
-          >
-            <div className={`w-full rounded-2xl p-3 border transition-all duration-200 h-[108px] flex flex-col justify-between ${
-              selectedNode === 'CDN' ? 'border-emerald-400 bg-[#081814] shadow-[0_0_20px_rgba(16,185,129,0.35)] ring-1 ring-emerald-400' : 'border-slate-800 bg-[#071311] hover:border-slate-700'
-            }`}>
-              <div>
-                <div className="flex items-center justify-between mb-1">
-                  <Network className="w-4 h-4 text-emerald-400" />
-                  <span className="text-[9px] bg-slate-900 text-slate-400 px-1 py-0.5 rounded font-mono">net-cdn</span>
-                </div>
-                <h3 className="text-xs font-sans font-bold text-slate-100 uppercase">CDN</h3>
-              </div>
-              <div className="text-[10px] text-slate-400 leading-tight">Anycast Edge</div>
-            </div>
-            <div className="w-full mt-2 rounded-xl border border-slate-800 bg-[#070e0d] px-3 py-1.5 text-left text-xs font-mono">
-              <div className="text-[9px] text-slate-400">HEALTH</div>
-              <div className="text-emerald-400 font-bold">{nodes[3].health}</div>
-            </div>
-          </div>
-
-          <NodeConnector isHazard={isHazard && activeFault === 'soc2'} variant="cdn_webhooks" />
-
-          {/* Node 5: WEBHOOKS */}
-          <div 
-            onClick={() => { sounds.playPing(); setSelectedNode('WEBHOOKS'); }}
-            className={`flex flex-col items-center flex-1 min-w-[110px] sm:min-w-[124px] max-w-[148px] shrink-0 cursor-pointer select-none`}
-          >
-            <div className={`w-full rounded-2xl p-3 border transition-all duration-200 h-[108px] flex flex-col justify-between ${
-              selectedNode === 'WEBHOOKS' ? 'border-emerald-400 bg-[#081814] shadow-[0_0_20px_rgba(16,185,129,0.35)] ring-1 ring-emerald-400' : 'border-slate-800 bg-[#071311] hover:border-slate-700'
-            }`}>
-              <div>
-                <div className="flex items-center justify-between mb-1">
-                  <Share2 className="w-4 h-4 text-emerald-400" />
-                  <span className="text-[9px] bg-slate-900 text-slate-400 px-1 py-0.5 rounded font-mono">evt-hook</span>
-                </div>
-                <h3 className="text-xs font-sans font-bold text-slate-100 uppercase">WEBHOOKS</h3>
-              </div>
-              <div className="text-[10px] text-slate-400 leading-tight">Signing Vault</div>
-            </div>
-            <div className="w-full mt-2 rounded-xl border border-slate-800 bg-[#070e0d] px-3 py-1.5 text-left text-xs font-mono">
-              <div className="text-[9px] text-slate-400">HEALTH</div>
-              <div className="text-emerald-400 font-bold">{nodes[4].health}</div>
-            </div>
-          </div>
-        </div>
       </div>
 
-      {/* Reactive Sanity App SDK Document Handles Panel */}
-      <AppSdkHandlesPanel 
-        nodes={nodes}
-        onOpenHub={() => setIsModalOpen(true)}
-      />
+      {/* BOTTOM SECTION: CHAOS CONTROL PANEL matching simulator exactly */}
+      <div className="w-full rounded-2xl border border-slate-800/90 bg-[#070b13]/95 shadow-2xl p-5 relative overflow-hidden">
+        
+        {/* Header */}
+        <div className="mb-4">
+          <h3 className="text-xs sm:text-sm font-sans font-bold text-slate-100 uppercase tracking-wider">
+            CHAOS CONTROL PANEL // APP SDK MUTATION INJECTORS
+          </h3>
+          <p className="text-[11px] font-sans text-slate-400 mt-0.5">
+            Inject precise failure modes directly into Sanity document handles with optimistic updates.
+          </p>
+        </div>
 
-      {/* 5-Stage Human-in-the-Loop Governance & Multi-Sig Attestation Gate */}
-      <div className="rounded-2xl border border-slate-800/90 bg-[#070b13]/95 p-5 sm:p-6 backdrop-blur-xl shadow-2xl">
+        {/* Horizontal Controls Row: 4 Action Cards, Slider (inline, no box), AI Mitigation */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-center">
+          
+          {/* 4 Failure Trigger Buttons (6 cols) */}
+          <div className="lg:col-span-6 grid grid-cols-2 sm:grid-cols-4 gap-2.5 font-mono">
+            
+            {/* 1. Postgres Lock */}
+            <button
+              onClick={() => {
+                if (activeFault === 'postgres') {
+                  setActiveFault('none');
+                  sounds.playClick();
+                  appSdk.mutateOptimistic('db-mig-002', 'deadline', { status: 'nominal', slaBufferMinutes: 20, doomsdayScore: 18 });
+                } else {
+                  setActiveFault('postgres');
+                  sounds.playAlarm();
+                  appSdk.mutateOptimistic('db-mig-002', 'deadline', { status: 'incident', slaBufferMinutes: 5, doomsdayScore: 88 });
+                }
+              }}
+              className={`p-2.5 rounded-xl border text-left transition-all duration-200 cursor-pointer ${
+                activeFault === 'postgres'
+                  ? 'border-rose-500 bg-rose-950/60 text-rose-200 ring-1 ring-rose-500'
+                  : 'border-slate-800/90 bg-[#070d18] hover:bg-slate-850 hover:border-slate-700 text-slate-200'
+              }`}
+            >
+              <div className="flex items-center gap-1.5 mb-1 text-[11px] leading-tight font-bold whitespace-nowrap">
+                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                <span>POSTGRES LOCK</span>
+              </div>
+              <div className="text-[10px] text-slate-500 truncate font-sans">
+                Acquire advisory lock
+              </div>
+            </button>
+
+            {/* 2. Stripe Timeout */}
+            <button
+              onClick={() => {
+                if (activeFault === 'stripe') {
+                  setActiveFault('none');
+                  sounds.playClick();
+                  appSdk.mutateOptimistic('fin-pay-003', 'deadline', { status: 'nominal', slaBufferMinutes: 25, doomsdayScore: 22 });
+                } else {
+                  setActiveFault('stripe');
+                  sounds.playAlarm();
+                  appSdk.mutateOptimistic('fin-pay-003', 'deadline', { status: 'incident', slaBufferMinutes: 5, doomsdayScore: 92 });
+                }
+              }}
+              className={`p-2.5 rounded-xl border text-left transition-all duration-200 cursor-pointer ${
+                activeFault === 'stripe'
+                  ? 'border-rose-500 bg-rose-950/60 text-rose-200 ring-1 ring-rose-500'
+                  : 'border-slate-800/90 bg-[#070d18] hover:bg-slate-850 hover:border-slate-700 text-slate-200'
+              }`}
+            >
+              <div className="flex items-center gap-1.5 mb-1 text-[11px] leading-tight font-bold whitespace-nowrap">
+                <Database className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                <span>STRIPE TIMEOUT</span>
+              </div>
+              <div className="text-[10px] text-slate-500 truncate font-sans">
+                Delay API responses
+              </div>
+            </button>
+
+            {/* 3. HSM Divergence */}
+            <button
+              onClick={() => {
+                if (activeFault === 'hsm') {
+                  setActiveFault('none');
+                  sounds.playClick();
+                  appSdk.mutateOptimistic('sec-auth-001', 'deadline', { status: 'nominal', slaBufferMinutes: 30, doomsdayScore: 14 });
+                } else {
+                  setActiveFault('hsm');
+                  sounds.playAlarm();
+                  appSdk.mutateOptimistic('sec-auth-001', 'deadline', { status: 'incident', slaBufferMinutes: 5, doomsdayScore: 85 });
+                }
+              }}
+              className={`p-2.5 rounded-xl border text-left transition-all duration-200 cursor-pointer ${
+                activeFault === 'hsm'
+                  ? 'border-rose-500 bg-rose-950/60 text-rose-200 ring-1 ring-rose-500'
+                  : 'border-slate-800/90 bg-[#070d18] hover:bg-slate-850 hover:border-slate-700 text-slate-200'
+              }`}
+            >
+              <div className="flex items-center gap-1.5 mb-1 text-[11px] leading-tight font-bold whitespace-nowrap">
+                <HsmDivergenceIcon className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                <span>HSM DIVERGENCE</span>
+              </div>
+              <div className="text-[10px] text-slate-500 truncate font-sans">
+                Desync key material
+              </div>
+            </button>
+
+            {/* 4. SOC2 Drift */}
+            <button
+              onClick={() => {
+                if (activeFault === 'soc2') {
+                  setActiveFault('none');
+                  sounds.playClick();
+                  appSdk.mutateOptimistic('evt-hook-006', 'deadline', { status: 'nominal', slaBufferMinutes: 15, doomsdayScore: 12 });
+                } else {
+                  setActiveFault('soc2');
+                  sounds.playAlarm();
+                  appSdk.mutateOptimistic('evt-hook-006', 'deadline', { status: 'incident', slaBufferMinutes: 5, doomsdayScore: 75 });
+                }
+              }}
+              className={`p-2.5 rounded-xl border text-left transition-all duration-200 cursor-pointer ${
+                activeFault === 'soc2'
+                  ? 'border-rose-500 bg-rose-950/60 text-rose-200 ring-1 ring-rose-500'
+                  : 'border-slate-800/90 bg-[#070d18] hover:bg-slate-850 hover:border-slate-700 text-slate-200'
+              }`}
+            >
+              <div className="flex items-center gap-1.5 mb-1 text-[11px] leading-tight font-bold whitespace-nowrap">
+                <AlertTriangle className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                <span>SOC2 DRIFT</span>
+              </div>
+              <div className="text-[10px] text-slate-500 truncate font-sans">
+                Policy violation drift
+              </div>
+            </button>
+
+          </div>
+
+          {/* Global Time Drift Slider (3 cols) */}
+          <div className="lg:col-span-3 flex flex-col justify-center font-mono px-2">
+            <div className="flex items-center gap-1.5 text-xs mb-1">
+              <span className="text-slate-300 text-[10px] uppercase font-bold tracking-wider">
+                GLOBAL TIME DRIFT
+              </span>
+              <span className="text-slate-500 text-[10px]">ⓘ</span>
+            </div>
+
+            <div className="text-sm font-mono font-bold text-emerald-400 mb-1.5">
+              {timeDrift >= 0 ? `+${timeDrift}` : timeDrift} ms
+            </div>
+
+            <input
+              type="range"
+              min="-500"
+              max="500"
+              step="10"
+              value={timeDrift}
+              onChange={(e) => {
+                const val = parseInt(e.target.value);
+                setTimeDrift(val);
+                if (val % 100 === 0) sounds.playClick();
+              }}
+              className="w-full h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-emerald-400"
+            />
+
+            <div className="flex justify-between text-[9px] text-slate-500 mt-1">
+              <span>-500 ms</span>
+              <span>+500 ms</span>
+            </div>
+          </div>
+
+          {/* Multi-Sig Sign-Off Button (3 cols) */}
+          <div className="lg:col-span-3">
+            <button
+              onClick={handleSignRelease}
+              disabled={isSigning}
+              className="w-full flex items-center justify-center gap-3 px-5 py-3.5 rounded-xl border border-emerald-400 bg-emerald-950/40 hover:bg-emerald-900/60 shadow-[0_0_25px_rgba(16,185,129,0.3)] hover:shadow-[0_0_40px_rgba(16,185,129,0.55)] transition-all cursor-pointer group disabled:opacity-50"
+            >
+              <Sparkles className="w-5 h-5 text-emerald-400 shrink-0 group-hover:scale-125 transition-transform" />
+              <div className="text-left font-mono">
+                <div className="text-slate-100 text-xs font-bold tracking-wider uppercase">
+                  {isSigning ? 'COMPUTING...' : 'SIGN MULTI-SIG'}
+                </div>
+                <div className="text-[10px] text-emerald-400 font-bold uppercase tracking-wider">
+                  ATTEST CONTENT LAKE
+                </div>
+              </div>
+            </button>
+          </div>
+
+        </div>
+
+      </div>
+
+      {/* 5-Stage Human-in-the-Loop Governance & Multi-Sig Audit Stream */}
+      <div className="rounded-2xl border border-slate-800/90 bg-[#070b13]/95 p-5 sm:p-6 backdrop-blur-xl shadow-2xl font-mono">
         <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-800 pb-3 mb-4">
           <div className="flex items-center gap-2.5">
             <GitBranch className="w-4 h-4 text-emerald-400" />
@@ -565,18 +1035,18 @@ export default function AppSdkPage() {
             </h3>
           </div>
           <span className="text-[10px] text-slate-500 font-mono">
-            Document Handle: WF-INCIDENT-001
+            Document: WF-INCIDENT-001 · Signatures: {signatures.length}/2
           </span>
         </div>
 
         {/* 5 Stages Horizontal Progression */}
-        <div className="grid grid-cols-1 sm:grid-cols-5 gap-2.5 mb-5">
+        <div className="grid grid-cols-1 sm:grid-cols-5 gap-2.5 mb-4">
           {[
             { id: 1, name: '1. Raw Anomaly', desc: 'SLA drift intercepted' },
             { id: 2, name: '2. Blast Radius', desc: 'Downstream DAG traced' },
             { id: 3, name: '3. Agent Cerberus', desc: 'Autonomous patch draft' },
             { id: 4, name: '4. Multi-Sig Gate', desc: 'Cryptographic sign-off' },
-            { id: 5, name: '5. Attested', desc: 'Content Lake revision committed' }
+            { id: 5, name: '5. Attested', desc: 'Content Lake committed' }
           ].map(stage => {
             const hasSigned = signatures.length >= 2;
             const isDone = hasSigned ? true : stage.id <= 3;
@@ -607,52 +1077,11 @@ export default function AppSdkPage() {
           })}
         </div>
 
-        {/* Multi-Sig Sign-Off Control Bar */}
-        <div className="flex flex-wrap items-center justify-between gap-4 p-4 rounded-xl bg-slate-950/80 border border-slate-800">
-          <div className="flex items-center gap-3 flex-wrap">
-            <div className="flex items-center gap-2">
-              <span className="text-[10px] text-slate-400 uppercase font-bold">OPERATOR:</span>
-              <input
-                type="text"
-                value={operatorId}
-                onChange={(e) => setOperatorId(e.target.value)}
-                className="bg-slate-900 border border-slate-700 rounded px-2 py-1 text-xs text-slate-100 font-bold"
-              />
-            </div>
-
-            <div className="flex items-center gap-2">
-              <span className="text-[10px] text-slate-400 uppercase font-bold">ROLE:</span>
-              <input
-                type="text"
-                value={operatorRole}
-                onChange={(e) => setOperatorRole(e.target.value)}
-                className="bg-slate-900 border border-slate-700 rounded px-2 py-1 text-xs text-slate-100 font-bold"
-              />
-            </div>
-          </div>
-
-          <div className="flex items-center gap-3">
-            <div className="text-right font-mono text-[10px] text-slate-400">
-              <span>Signatures: </span>
-              <strong className="text-emerald-400">{signatures.length}/2 Consensus</strong>
-            </div>
-
-            <button
-              onClick={handleSignRelease}
-              disabled={isSigning}
-              className="px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs flex items-center gap-2 transition-all shadow-[0_0_20px_rgba(16,185,129,0.35)] cursor-pointer disabled:opacity-50"
-            >
-              <Key className="w-3.5 h-3.5" />
-              <span>{isSigning ? 'Computing Digest...' : 'Sign Release & Attest Lake'}</span>
-            </button>
-          </div>
-        </div>
-
-        {/* Digital Signature Audit Stream */}
+        {/* Digital Signature Stream */}
         {signatures.length > 0 && (
-          <div className="mt-3 space-y-1.5 font-mono text-[11px]">
+          <div className="space-y-1.5 font-mono text-[11px] pt-2">
             {signatures.map((sig) => (
-              <div key={sig.id} className="p-2 rounded bg-slate-900/60 border border-emerald-500/30 flex items-center justify-between text-slate-300">
+              <div key={sig.id} className="p-2.5 rounded-xl bg-slate-900/60 border border-emerald-500/30 flex items-center justify-between text-slate-300">
                 <div className="flex items-center gap-2">
                   <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
                   <span className="text-emerald-400 font-bold">{sig.operatorId}</span>
@@ -666,6 +1095,22 @@ export default function AppSdkPage() {
             ))}
           </div>
         )}
+
+        {/* Live App SDK Event Ticker */}
+        <div className="mt-3 pt-3 border-t border-slate-800/80 flex items-center gap-2 overflow-x-auto text-xs">
+          <span className="text-[10px] text-slate-500 uppercase shrink-0">LAKE STREAM:</span>
+          {events.slice(0, 5).map((evt, idx) => (
+            <div
+              key={evt.id || idx}
+              className="shrink-0 flex items-center gap-2 px-2.5 py-1 rounded-lg border border-slate-800 bg-slate-900/50 text-[10px] text-slate-300"
+            >
+              <span className="text-slate-500">{evt.timestamp}</span>
+              <span className="text-emerald-400 font-bold">{evt.type}</span>
+              <span>[{evt.handleKey}]</span>
+              <span className="text-emerald-400">{evt.latencyMs}ms</span>
+            </div>
+          ))}
+        </div>
       </div>
 
       {/* Production Grade Sanity App SDK Operations Hub Modal */}
