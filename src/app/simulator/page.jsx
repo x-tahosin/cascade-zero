@@ -19,10 +19,14 @@ import {
   ArrowRight,
   RefreshCw,
   Cpu,
-  FileText
+  FileText,
+  Layers
 } from 'lucide-react';
 import { sounds } from '../../engine/soundFx';
 import { ECG_NORMAL_PATH, ECG_HAZARD_PATH } from '../../engine/ecgPaths';
+import { appSdk } from '../../sanity/appSdk';
+import AppSdkHandlesPanel from '../../components/AppSdkHandlesPanel';
+import AppSdkModal from '../../components/modals/AppSdkModal';
 
 // Exact Medical / Telemetry Heartbeat (ECG) Icon matching reference image
 function HeartbeatIcon({ className = "w-4 h-4 text-emerald-400" }) {
@@ -294,6 +298,30 @@ export default function SimulatorPage() {
   const [isMitigating, setIsMitigating] = useState(false);
   const [mitigationStep, setMitigationStep] = useState(0);
   const [liveUtc, setLiveUtc] = useState('10:23:41 UTC');
+  const [isAppSdkDockOpen, setIsAppSdkDockOpen] = useState(false);
+  const [isAppSdkModalOpen, setIsAppSdkModalOpen] = useState(false);
+  const [nodeSlaBuffers, setNodeSlaBuffers] = useState({
+    AUTH: 30,
+    DATABASE: 20,
+    PAYMENTS: 25,
+    CDN: 30,
+    WEBHOOKS: 15
+  });
+
+  const handleAppSdkNodeUpdate = (docId, newSla) => {
+    const mapping = {
+      'sec-auth-001': 'AUTH',
+      'db-mig-002': 'DATABASE',
+      'fin-pay-003': 'PAYMENTS',
+      'net-cdn-005': 'CDN',
+      'evt-hook-006': 'WEBHOOKS'
+    };
+    const serviceKey = mapping[docId] || docId;
+    setNodeSlaBuffers(prev => ({
+      ...prev,
+      [serviceKey]: newSla
+    }));
+  };
 
   // Real-time ticking UTC clock matching the reference footer
   useEffect(() => {
@@ -421,6 +449,12 @@ export default function SimulatorPage() {
       penalty += (timeDrift / 100) * 1.8;
     }
 
+    // App SDK SLA buffer cushioning
+    const buffer = nodeSlaBuffers[nodeId] || 20;
+    if (buffer > 30) {
+      penalty = Math.max(0, penalty - (buffer - 30) * 0.35);
+    }
+
     const calculated = Math.max(68.4, baseHealth - penalty);
     return `${calculated.toFixed(2)}%`;
   };
@@ -455,6 +489,23 @@ export default function SimulatorPage() {
   const handleApplyRemediation = () => {
     sounds.playChime();
     setIsMitigating(true);
+
+    // 1. App SDK Atomic Batch Mutation across all nodes
+    appSdk.mutateBatchOptimistic([
+      { documentId: 'sec-auth-001', documentType: 'deadline', patches: { slaBufferMinutes: 45, status: 'nominal', doomsdayScore: 10 } },
+      { documentId: 'db-mig-002', documentType: 'deadline', patches: { slaBufferMinutes: 40, status: 'nominal', doomsdayScore: 12 } },
+      { documentId: 'fin-pay-003', documentType: 'deadline', patches: { slaBufferMinutes: 50, status: 'nominal', doomsdayScore: 14 } },
+      { documentId: 'net-cdn-005', documentType: 'deadline', patches: { slaBufferMinutes: 35, status: 'nominal', doomsdayScore: 8 } },
+      { documentId: 'evt-hook-006', documentType: 'deadline', patches: { slaBufferMinutes: 30, status: 'nominal', doomsdayScore: 10 } }
+    ]);
+
+    setNodeSlaBuffers({
+      AUTH: 45,
+      DATABASE: 40,
+      PAYMENTS: 50,
+      CDN: 35,
+      WEBHOOKS: 30
+    });
 
     setTimeout(() => {
       setActiveFault('none');
@@ -572,15 +623,57 @@ export default function SimulatorPage() {
         {/* Left: DAG Area - FLOATS DIRECTLY ON PAGE BACKGROUND WITHOUT ENCLOSING BOX */}
         <div className={`${isDrawerOpen ? 'lg:col-span-8' : 'lg:col-span-12'} flex flex-col justify-center min-h-[300px]`}>
           
-          {/* Causal Horizon DAG Title directly on background */}
-          <div className="mb-4">
-            <h1 className="text-sm sm:text-base font-bold font-sans tracking-wider text-slate-100 uppercase">
-              CAUSAL HORIZON DAG
-            </h1>
-            <p className="text-xs text-slate-400 font-sans mt-0.5">
-              Cause and effect. Visualize failure propagation.
-            </p>
+          {/* Causal Horizon DAG Title directly on background with Sanity App SDK Control Toggle */}
+          <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
+            <div>
+              <h1 className="text-sm sm:text-base font-bold font-sans tracking-wider text-slate-100 uppercase">
+                CAUSAL HORIZON DAG
+              </h1>
+              <p className="text-xs text-slate-400 font-sans mt-0.5">
+                Cause and effect. Real-time Sanity App SDK Document Handles sync.
+              </p>
+            </div>
+
+            <div className="flex items-center gap-2.5">
+              <button
+                onClick={() => {
+                  sounds.playClick();
+                  setIsAppSdkDockOpen(!isAppSdkDockOpen);
+                }}
+                className={`flex items-center gap-2 px-3 py-1.5 rounded-xl border text-xs font-mono transition-all cursor-pointer ${
+                  isAppSdkDockOpen
+                    ? 'border-emerald-400 bg-emerald-950/60 text-emerald-300 shadow-[0_0_15px_rgba(16,185,129,0.3)]'
+                    : 'border-slate-800 bg-[#060a12] text-slate-300 hover:border-slate-700 hover:text-emerald-400'
+                }`}
+              >
+                <Layers className="w-3.5 h-3.5 text-emerald-400" />
+                <span>SANITY APP SDK {isAppSdkDockOpen ? 'DOCK [OPEN]' : 'DOCK'}</span>
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse shadow-[0_0_6px_#10b981]" />
+              </button>
+
+              <button
+                onClick={() => {
+                  sounds.playClick();
+                  setIsAppSdkModalOpen(true);
+                }}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-slate-800 bg-[#060a12] hover:border-emerald-500/40 text-xs font-mono text-slate-300 hover:text-emerald-400 transition-all cursor-pointer"
+              >
+                <Activity className="w-3.5 h-3.5 text-emerald-400" />
+                <span className="hidden sm:inline">OPERATIONS HUB</span>
+              </button>
+            </div>
           </div>
+
+          {/* Collapsible Sanity App SDK Control Dock */}
+          {isAppSdkDockOpen && (
+            <div className="mb-4 animate-in fade-in slide-in-from-top-2 duration-200">
+              <AppSdkHandlesPanel
+                nodes={nodes}
+                onUpdateNode={handleAppSdkNodeUpdate}
+                onOpenHub={() => setIsAppSdkModalOpen(true)}
+              />
+            </div>
+          )}
 
           {/* DAG Nodes and Connectors Row directly on background */}
           <div className="flex items-center justify-between gap-1 sm:gap-2 py-4 overflow-x-auto">
@@ -757,9 +850,19 @@ export default function SimulatorPage() {
                 if (activeFault === 'postgres') {
                   setActiveFault('none');
                   sounds.playClick();
+                  appSdk.mutateOptimistic('db-mig-002', 'deadline', {
+                    status: 'nominal',
+                    slaBufferMinutes: 20,
+                    doomsdayScore: 18
+                  });
                 } else {
                   setActiveFault('postgres');
                   sounds.playAlarm();
+                  appSdk.mutateOptimistic('db-mig-002', 'deadline', {
+                    status: 'incident',
+                    slaBufferMinutes: 5,
+                    doomsdayScore: 88
+                  });
                 }
               }}
               className={`p-2.5 rounded-xl border text-left font-mono transition-all duration-200 cursor-pointer ${
@@ -783,9 +886,19 @@ export default function SimulatorPage() {
                 if (activeFault === 'stripe') {
                   setActiveFault('none');
                   sounds.playClick();
+                  appSdk.mutateOptimistic('fin-pay-003', 'deadline', {
+                    status: 'nominal',
+                    slaBufferMinutes: 25,
+                    doomsdayScore: 22
+                  });
                 } else {
                   setActiveFault('stripe');
                   sounds.playAlarm();
+                  appSdk.mutateOptimistic('fin-pay-003', 'deadline', {
+                    status: 'incident',
+                    slaBufferMinutes: 5,
+                    doomsdayScore: 92
+                  });
                 }
               }}
               className={`p-2.5 rounded-xl border text-left font-mono transition-all duration-200 cursor-pointer ${
@@ -809,9 +922,19 @@ export default function SimulatorPage() {
                 if (activeFault === 'hsm') {
                   setActiveFault('none');
                   sounds.playClick();
+                  appSdk.mutateOptimistic('sec-auth-001', 'deadline', {
+                    status: 'nominal',
+                    slaBufferMinutes: 30,
+                    doomsdayScore: 14
+                  });
                 } else {
                   setActiveFault('hsm');
                   sounds.playAlarm();
+                  appSdk.mutateOptimistic('sec-auth-001', 'deadline', {
+                    status: 'incident',
+                    slaBufferMinutes: 5,
+                    doomsdayScore: 85
+                  });
                 }
               }}
               className={`p-2.5 rounded-xl border text-left font-mono transition-all duration-200 cursor-pointer ${
@@ -835,9 +958,19 @@ export default function SimulatorPage() {
                 if (activeFault === 'soc2') {
                   setActiveFault('none');
                   sounds.playClick();
+                  appSdk.mutateOptimistic('evt-hook-006', 'deadline', {
+                    status: 'nominal',
+                    slaBufferMinutes: 15,
+                    doomsdayScore: 12
+                  });
                 } else {
                   setActiveFault('soc2');
                   sounds.playAlarm();
+                  appSdk.mutateOptimistic('evt-hook-006', 'deadline', {
+                    status: 'incident',
+                    slaBufferMinutes: 5,
+                    doomsdayScore: 75
+                  });
                 }
               }}
               className={`p-2.5 rounded-xl border text-left font-mono transition-all duration-200 cursor-pointer ${
@@ -1012,6 +1145,14 @@ export default function SimulatorPage() {
           </div>
         </div>
       )}
+
+      {/* Production Grade Sanity App SDK Operations Hub Modal */}
+      <AppSdkModal
+        isOpen={isAppSdkModalOpen}
+        onClose={() => setIsAppSdkModalOpen(false)}
+        nodes={nodes}
+        onUpdateNode={handleAppSdkNodeUpdate}
+      />
 
     </div>
   );

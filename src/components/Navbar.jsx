@@ -28,6 +28,14 @@ export default function Navbar() {
         </span>
       );
     }
+    if (pathname === '/app-sdk') {
+      return (
+        <span className="flex items-center gap-1.5 text-xs text-emerald-400 font-mono tracking-wider font-semibold">
+          /APP-SDK
+          <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse shadow-[0_0_8px_#10b981]" />
+        </span>
+      );
+    }
     if (pathname === '/governance' || pathname === '/analytics') {
       return (
         <span className="flex items-center gap-1.5 text-xs text-emerald-400 font-mono tracking-wider font-semibold">
@@ -42,6 +50,7 @@ export default function Navbar() {
   const navLinks = [
     { label: 'OVERVIEW', href: '/' },
     { label: 'SIMULATOR', href: '/simulator' },
+    { label: 'APP SDK', href: '/app-sdk' },
     { label: 'EXPERIMENTS', href: '/lake' },
     { label: 'ANALYTICS', href: '/governance' }
   ];
