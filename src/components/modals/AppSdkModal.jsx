@@ -39,23 +39,24 @@ export default function AppSdkModal({ isOpen, onClose, nodes, onUpdateNode }) {
 
   const handleTriggerOptimistic = (nodeId) => {
     sounds.playClick();
-    const updatedSla = Number(testPatchValue);
+    const parsed = Number(testPatchValue);
+    const updatedSla = isNaN(parsed) ? 30 : Math.min(180, Math.max(0, parsed));
 
-    // 1. App SDK Optimistic Mutation
-    appSdk.mutateOptimistic(nodeId, 'deadline', {
+    // 1. Determine correct document type from appSdk
+    const targetDoc = appSdk.getDocument(nodeId);
+    const docType = targetDoc ? targetDoc._type : (nodeId.startsWith('WF') ? 'incidentWorkflow' : 'deadline');
+
+    // 2. App SDK Optimistic Mutation
+    appSdk.mutateOptimistic(nodeId, docType, {
       slaBufferMinutes: updatedSla,
+      status: updatedSla >= 30 ? 'nominal' : 'degraded',
+      doomsdayScore: Math.max(5, Math.round(30 - (updatedSla * 0.4))),
       modifiedAt: new Date().toISOString()
     });
 
-    // 2. Local state sync if callback provided
-    if (onUpdateNode && nodes) {
-      const target = nodes.find(n => n.id === nodeId || n.sanityId === nodeId);
-      if (target) {
-        onUpdateNode({
-          ...target,
-          slaBufferMinutes: updatedSla
-        });
-      }
+    // 3. Local state sync if callback provided
+    if (onUpdateNode) {
+      onUpdateNode(nodeId, updatedSla);
     }
 
     sounds.playPing();
@@ -63,6 +64,7 @@ export default function AppSdkModal({ isOpen, onClose, nodes, onUpdateNode }) {
 
   const handleSelectPerspective = (p) => {
     sounds.playClick();
+    setPerspective(p);
     appSdk.setPerspective(p);
   };
 
@@ -286,6 +288,17 @@ export default function AppSdkModal({ isOpen, onClose, nodes, onUpdateNode }) {
                     </p>
                   </div>
                 ))}
+              </div>
+
+              {/* Live Perspective Projection Preview */}
+              <div className="mt-2 p-3 rounded-xl bg-slate-900/90 border border-slate-800">
+                <div className="flex items-center justify-between text-[10px] text-slate-400 font-mono mb-2">
+                  <span>LIVE PROJECTION: <strong className="text-emerald-400 uppercase">{perspective}</strong></span>
+                  <span className="text-slate-500">Document: sec-auth-001</span>
+                </div>
+                <pre className="text-[11px] text-emerald-300 font-mono overflow-x-auto max-h-40 leading-relaxed bg-black/60 p-2.5 rounded-lg border border-slate-800/80">
+                  {JSON.stringify(appSdk.getProjection(perspective).find(d => d._id === 'sec-auth-001') || {}, null, 2)}
+                </pre>
               </div>
             </div>
           )}

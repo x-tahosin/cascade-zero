@@ -81,6 +81,7 @@ export default function AppSdkHandlesPanel({
 
   const handleSwitchPerspective = (newP) => {
     sounds.playClick();
+    setPerspective(newP);
     appSdk.setPerspective(newP);
   };
 
@@ -96,6 +97,8 @@ export default function AppSdkHandlesPanel({
   };
 
   const selectedDocument = documents.find(d => d._id === selectedDocId) || documents[0];
+  const projectedDocuments = appSdk.getProjection(perspective);
+  const selectedProjection = projectedDocuments.find(d => d._id === selectedDocId) || selectedDocument;
 
   return (
     <div className="rounded-2xl border border-slate-800/90 bg-[#070b13]/95 p-5 sm:p-6 backdrop-blur-xl shadow-2xl font-mono relative overflow-hidden">
@@ -298,7 +301,7 @@ export default function AppSdkHandlesPanel({
         {/* JSON Inspector View if toggled */}
         {showJsonInspector && (
           <div className="mb-3 p-3 rounded-lg bg-black/90 border border-slate-800 font-mono text-[11px] text-emerald-400/90 overflow-x-auto max-h-48 leading-relaxed">
-            <pre>{JSON.stringify(selectedDocument, null, 2)}</pre>
+            <pre>{JSON.stringify(selectedProjection, null, 2)}</pre>
           </div>
         )}
 

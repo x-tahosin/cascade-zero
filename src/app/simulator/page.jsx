@@ -308,20 +308,56 @@ export default function SimulatorPage() {
     WEBHOOKS: 15
   });
 
-  const handleAppSdkNodeUpdate = (docId, newSla) => {
+  const handleAppSdkNodeUpdate = (arg1, arg2) => {
+    let docId, newSla;
+    if (typeof arg1 === 'object' && arg1 !== null) {
+      docId = arg1.id || arg1._id || arg1.serviceKey;
+      newSla = arg1.slaBufferMinutes;
+    } else {
+      docId = arg1;
+      newSla = arg2;
+    }
+
     const mapping = {
       'sec-auth-001': 'AUTH',
       'db-mig-002': 'DATABASE',
       'fin-pay-003': 'PAYMENTS',
       'net-cdn-005': 'CDN',
-      'evt-hook-006': 'WEBHOOKS'
+      'evt-hook-006': 'WEBHOOKS',
+      'WF-INCIDENT-001': 'WORKFLOW'
     };
     const serviceKey = mapping[docId] || docId;
-    setNodeSlaBuffers(prev => ({
-      ...prev,
-      [serviceKey]: newSla
-    }));
+    if (serviceKey && newSla !== undefined) {
+      setNodeSlaBuffers(prev => ({
+        ...prev,
+        [serviceKey]: Number(newSla)
+      }));
+    }
   };
+
+  // Sync Simulator state reactively with live Sanity App SDK Content Lake
+  useEffect(() => {
+    const unsub = appSdk.subscribe(snapshot => {
+      if (snapshot.documents && snapshot.documents.length > 0) {
+        const mapping = {
+          'sec-auth-001': 'AUTH',
+          'db-mig-002': 'DATABASE',
+          'fin-pay-003': 'PAYMENTS',
+          'net-cdn-005': 'CDN',
+          'evt-hook-006': 'WEBHOOKS'
+        };
+        const synced = {};
+        snapshot.documents.forEach(d => {
+          const key = mapping[d._id] || d.serviceKey;
+          if (key && d.slaBufferMinutes !== undefined) {
+            synced[key] = d.slaBufferMinutes;
+          }
+        });
+        setNodeSlaBuffers(prev => ({ ...prev, ...synced }));
+      }
+    });
+    return () => unsub();
+  }, []);
 
   // Real-time ticking UTC clock matching the reference footer
   useEffect(() => {
@@ -582,8 +618,9 @@ export default function SimulatorPage() {
 
           {/* HEALTH Label & Value */}
           <div>
-            <div className="text-[9px] uppercase font-mono text-slate-400 font-bold tracking-wider mb-0.5">
-              HEALTH
+            <div className="text-[9px] uppercase font-mono text-slate-400 font-bold tracking-wider mb-0.5 flex items-center justify-between">
+              <span>HEALTH</span>
+              <span className="text-[9px] text-emerald-400 font-normal">+{nodeSlaBuffers[node.id] || 20}m SLA</span>
             </div>
             <div className={`text-xs font-mono font-bold ${isFailing ? 'text-rose-400' : 'text-emerald-400'}`}>
               {health}

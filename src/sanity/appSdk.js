@@ -444,13 +444,19 @@ class AppSdkManager {
     };
   }
 
+  resetSignatures() {
+    this.multiSigSignatures = [];
+    this.logEvent('MULTISIG_RESET', 'WF-INCIDENT-001', { reason: 'Signatures reset for testing' }, 2);
+    this.notify();
+  }
+
   getSnapshot() {
     return {
       perspective: this.perspective,
       projectId: this.projectId,
       dataset: this.dataset,
       handles: this.getAllHandles(),
-      documents: Array.from(this.documents.values()),
+      documents: Array.from(this.documents.values()).map(d => ({ ...d })),
       events: [...this.eventLedger],
       signatures: [...this.multiSigSignatures]
     };

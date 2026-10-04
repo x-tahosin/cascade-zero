@@ -78,11 +78,12 @@ export default function AppSdkStudioPage() {
 
   const handleSlaChange = (docId, newMinutes) => {
     sounds.playClick();
-    const val = parseInt(newMinutes, 10);
+    const parsed = parseInt(newMinutes, 10);
+    const val = isNaN(parsed) ? 20 : Math.min(180, Math.max(0, parsed));
     setLastMutatedId(docId);
 
     const targetDoc = documents.find(d => d._id === docId);
-    const docType = targetDoc ? targetDoc._type : 'deadline';
+    const docType = targetDoc ? targetDoc._type : (docId.startsWith('WF') ? 'incidentWorkflow' : 'deadline');
 
     appSdk.mutateOptimistic(docId, docType, {
       slaBufferMinutes: val,
@@ -105,6 +106,7 @@ export default function AppSdkStudioPage() {
 
   const handleSwitchPerspective = (newP) => {
     sounds.playClick();
+    setPerspective(newP);
     appSdk.setPerspective(newP);
   };
 
@@ -117,6 +119,12 @@ export default function AppSdkStudioPage() {
       setIsSigning(false);
       sounds.playChime();
 
+      // If first signer signed, suggest next operator for 2/2 consensus quorum
+      if (operatorId === 'SECOPS-CMD-01') {
+        setOperatorId('VP-ENG-02');
+        setOperatorRole('VP of Engineering');
+      }
+
       try {
         confetti({
           particleCount: 100,
@@ -126,6 +134,13 @@ export default function AppSdkStudioPage() {
         });
       } catch {}
     }, 600);
+  };
+
+  const handleResetSignatures = () => {
+    sounds.playClick();
+    appSdk.resetSignatures();
+    setOperatorId('SECOPS-CMD-01');
+    setOperatorRole('Lead Incident Commander');
   };
 
   const handleExportAudit = () => {
@@ -533,6 +548,17 @@ const view = appSdk.getProjection('${perspective}');`}
               <span>Signatures: </span>
               <strong className="text-emerald-400">{signatures.length}/2 Consensus</strong>
             </div>
+
+            {signatures.length > 0 && (
+              <button
+                onClick={handleResetSignatures}
+                className="px-3 py-2 rounded-xl border border-slate-700 bg-slate-900 hover:bg-slate-800 text-slate-300 font-bold text-xs flex items-center gap-1.5 transition-all cursor-pointer"
+                title="Reset Signatures for Re-Testing"
+              >
+                <RefreshCw className="w-3.5 h-3.5 text-slate-400" />
+                <span>Reset</span>
+              </button>
+            )}
 
             <button
               onClick={handleSignRelease}
